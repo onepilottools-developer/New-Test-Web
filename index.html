@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OnePilot Hub Pro | Standalone Version</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        
+        /* 🔥 ULTRA WHITE THEME VARIABLES 🔥 */
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #fafafa;
+            --bg-tertiary: #f5f5f7;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --border-color: #eeeeee;
+            --shadow-soft: 0 4px 20px rgba(0,0,0,0.04);
+            --shadow-hover: 0 12px 40px rgba(0,0,0,0.08);
+            --accent: #5352ed;
+            --accent-light: #7a7aff;
+            --accent-glow: rgba(83, 82, 237, 0.15);
+        }
+        
+        body { background: var(--bg-primary); display: flex; height: 100vh; overflow: hidden; color: var(--text-primary); }
+
+        .sidebar { width: 260px; background: var(--bg-primary); border-right: 1px solid var(--border-color); padding: 25px 15px; flex-shrink: 0; overflow-y: auto; }
+        .logo { font-size: 22px; font-weight: 800; color: var(--accent); text-align: center; margin-bottom: 30px; }
+        
+        /* 🎨 ENHANCED HOVER EFFECTS FOR NAV */
+        .nav-item { padding: 12px 15px; border-radius: 12px; color: #64748b; cursor: pointer; margin-bottom: 5px; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 12px; transition: all 0.25s ease; position: relative; overflow: hidden; }
+        .nav-item::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 3px; background: var(--accent); transform: scaleY(0); transition: transform 0.25s ease; }
+        .nav-item:hover { background: var(--bg-tertiary); color: var(--accent); transform: translateX(3px); }
+        .nav-item:hover::before { transform: scaleY(1); }
+        .nav-item.active { background: linear-gradient(135deg, rgba(83,82,237,0.08), rgba(122,122,255,0.05)); color: var(--accent); border-left: 3px solid var(--accent); }
+
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; }
+        .search-area { width: 100%; max-width: 600px; position: relative; margin-bottom: 40px; }
+        .search-box { width: 100%; padding: 15px 60px; border-radius: 50px; border: 1px solid #e2e8f0; outline: none; font-size: 16px; box-shadow: var(--shadow-soft); transition: all 0.25s ease; background: var(--bg-primary); }
+        .search-box:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow), var(--shadow-hover); transform: translateY(-2px); }
+        .search-area i { position: absolute; left: 20px; top: 18px; color: var(--accent); font-size: 20px; transition: transform 0.25s ease; }
+        .search-box:focus + i { transform: scale(1.1); }
+
+        .grid { display: grid; grid-template-columns: repeat(3, 220px); gap: 25px; width: 100%; }
+
+        /* 🎨 ENHANCED CARD HOVER EFFECTS */
+        .card { background: var(--bg-primary); width: 220px; height: 340px; border-radius: 16px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow-soft); cursor: pointer; border: 1px solid var(--border-color); position: relative; }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-light)); opacity: 0; transition: opacity 0.3s ease; }
+        .card:hover { transform: translateY(-8px) scale(1.02); box-shadow: var(--shadow-hover); border-color: var(--accent); z-index: 5; }
+        .card:hover::before { opacity: 1; }
+        .img-box { height: 190px; background: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; padding: 20px; position: relative; overflow: hidden; }
+        .img-box::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, var(--accent-glow) 0%, transparent 70%); opacity: 0; transition: opacity 0.3s ease; }
+        .card:hover .img-box::after { opacity: 1; }
+        .img-box img { max-width: 100%; max-height: 100%; transition: transform 0.3s ease, filter 0.3s ease; }
+        .card:hover img { transform: scale(1.08); filter: drop-shadow(0 8px 16px rgba(0,0,0,0.1)); }
+        .text-box { padding: 15px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+        .text-box h3 { font-size: 14px; font-weight: 700; color: var(--text-primary); transition: color 0.25s ease; }
+        .card:hover .text-box h3 { color: var(--accent); }
+        .card-btn { background: linear-gradient(45deg,var(--accent),var(--accent-light)); color: white; text-align: center; padding: 12px 0; font-size: 13px; font-weight: 600; transition: all 0.25s ease; position: relative; overflow: hidden; }
+        .card-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); transition: left 0.4s ease; }
+        .card:hover .card-btn::before { left: 100%; }
+        .card:hover .card-btn { box-shadow: 0 8px 25px rgba(83,82,237,0.35); transform: translateY(-2px); }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.92); z-index: 1000000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .modal-box { background: var(--bg-primary); padding: 40px; border-radius: 30px; width: 480px; box-shadow: var(--shadow-hover); text-align: center; animation: slideUp 0.3s ease-out; border: 1px solid var(--border-color); }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-box i.main-icon { font-size: 55px; color: var(--accent); margin-bottom: 20px; background: rgba(83,82,237,0.08); padding: 25px; border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 var(--accent-glow); } 50% { box-shadow: 0 0 0 12px rgba(83,82,237,0); } }
+        .modal-box h2 { font-size: 22px; color: var(--text-primary); margin-bottom: 10px; font-weight: 700; }
+        .modal-box p { color: var(--text-secondary); margin-bottom: 25px; font-size: 14px; word-wrap: break-word; overflow-wrap: break-word; }
+        .modal-box input, .modal-box textarea { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid rgba(83,82,237,0.15); margin-bottom: 20px; outline: none; font-family: 'Poppins', sans-serif; transition: all 0.25s ease; background: var(--bg-secondary); }
+        .modal-box input:focus, .modal-box textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow); background: var(--bg-primary); }
+        .modal-box textarea { min-height: 100px; resize: vertical; }
+        .action-btn { width: 100%; padding: 16px; border-radius: 15px; border: none; background: var(--accent); color: #fff; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.25s ease; position: relative; overflow: hidden; }
+        .action-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent); transition: left 0.4s ease; }
+        .action-btn:hover::before { left: 100%; }
+        .action-btn:hover { background: #3e3dbb; transform: scale(1.02); box-shadow: 0 10px 30px rgba(83,82,237,0.3); }
+        .close-link { display: block; margin-top: 15px; color: #94a3b8; cursor: pointer; font-size: 14px; transition: color 0.2s ease; }
+        .close-link:hover { color: var(--accent); }
+
+        #loadingOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 9999999; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .pure-css-loader { width: 80px; height: 80px; border: 8px solid #f3f3f3; border-top: 8px solid var(--accent); border-radius: 50%; animation: spin 1.2s linear infinite; box-shadow: 0 0 20px var(--accent-glow); }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        #viewer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-primary); z-index: 10000; padding: 20px; }
+        #viewer iframe { width: 100%; height: calc(100% - 60px); border: none; border-radius: 20px; background: var(--bg-primary); box-shadow: var(--shadow-hover); }
+        .back-btn { padding: 10px 20px; background: var(--accent); color: white; border: none; border-radius: 10px; cursor: pointer; margin-bottom: 15px; font-weight: 700; transition: all 0.25s ease; }
+        .back-btn:hover { background: #3e3dbb; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(83,82,237,0.3); }
+        
+        .badge { background: #ef4444; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; margin-left: 5px; }
+
+        /* =============================================
+           MISSION SUCCESSFUL POPUP - ENHANCED WHITE THEME
+           ============================================= */
+        #missionModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 99999999; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        
+        .mission-box {
+            background: var(--bg-primary);
+            border-radius: 32px;
+            padding: 50px 40px 40px;
+            width: 420px;
+            text-align: center;
+            box-shadow: var(--shadow-hover);
+            animation: missionPop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        @keyframes missionPop {
+            from { transform: scale(0.5) translateY(40px); opacity: 0; }
+            to   { transform: scale(1) translateY(0);      opacity: 1; }
+        }
+
+        .mission-ribbon {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--accent), #22c55e, #f59e0b, #ef4444, var(--accent));
+            background-size: 300% 100%;
+            animation: ribbonSlide 2s linear infinite;
+        }
+        @keyframes ribbonSlide {
+            0%   { background-position: 0% 0%; }
+            100% { background-position: 300% 0%; }
+        }
+
+        .mission-check-wrap {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            margin: 0 auto 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 30px rgba(34, 197, 94, 0.4);
+            animation: checkPulse 2s ease-in-out infinite;
+        }
+        @keyframes checkPulse {
+            0%, 100% { box-shadow: 0 8px 30px rgba(34, 197, 94, 0.4); transform: scale(1); }
+            50%       { box-shadow: 0 8px 50px rgba(34, 197, 94, 0.7); transform: scale(1.05); }
+        }
+        .mission-check-wrap i { font-size: 46px; color: #fff; }
+
+        .mission-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        .mission-title span { color: #22c55e; }
+
+        .mission-sub {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .folder-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            border: none;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        .folder-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent); transition: left 0.4s ease; }
+        .folder-btn:hover::before { left: 100%; }
+        .folder-btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 10px 28px rgba(245,158,11,0.5); }
+        .folder-btn i { font-size: 20px; }
+
+        .mission-close-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 16px;
+            border: 2px solid var(--border-color);
+            background: var(--bg-primary);
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+        .mission-close-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); transform: translateY(-2px); }
+
+        .stars-container {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            border-radius: 32px;
+        }
+        .star {
+            position: absolute;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            animation: floatStar 3s ease-in-out infinite;
+            opacity: 0;
+        }
+        @keyframes floatStar {
+            0%   { transform: translateY(100%) scale(0); opacity: 0; }
+            20%  { opacity: 1; }
+            80%  { opacity: 0.8; }
+            100% { transform: translateY(-20px) scale(1.5); opacity: 0; }
+        }
+
+        /* =============================================
+           ✨ ENHANCED SPLASH SCREEN - WHITE THEME ✨
+           ============================================= */
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&display=swap');
+
+        #splashScreen {
+            position:fixed;inset:0;z-index:2147483647;overflow:hidden;
+            background:var(--bg-primary);
+            display:flex;align-items:center;justify-content:center;
+            transition:opacity 1s cubic-bezier(.77,0,.18,1),transform 1s cubic-bezier(.77,0,.18,1);
+        }
+        #splashScreen.hide{opacity:0;transform:scale(1.07);pointer-events:none;}
+        
+        .sp-orb{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;
+            animation:orbDrift ease-in-out infinite alternate;opacity:0.5;}
+        @keyframes orbDrift{0%{transform:translate(0,0) scale(1)}100%{transform:translate(var(--dx),var(--dy)) scale(var(--ds))}}
+        
+        .sp-grid{position:absolute;inset:0;pointer-events:none;
+            background-image:linear-gradient(rgba(83,82,237,.04) 1px,transparent 1px),
+                linear-gradient(90deg,rgba(83,82,237,.04) 1px,transparent 1px);
+            background-size:52px 52px;
+            mask-image:radial-gradient(ellipse 75% 75% at 50% 50%,#000 20%,transparent 100%);}
+        
+        .sp-conf{position:absolute;opacity:0;pointer-events:none;animation:confRise linear infinite;}
+        @keyframes confRise{
+            0%{transform:translateY(108vh) rotate(0deg) scale(.5);opacity:0}
+            7%{opacity:.65}93%{opacity:.35}
+            100%{transform:translateY(-12vh) rotate(600deg) scale(1.1);opacity:0}}
+        
+        .sp-card{
+            position:relative;z-index:20;width:556px;
+            background:var(--bg-primary);border-radius:36px;overflow:hidden;
+            box-shadow:0 0 0 1px rgba(83,82,237,.08),var(--shadow-hover);
+            animation:cardIn 1.1s cubic-bezier(.34,1.4,.64,1) both;
+            border:1px solid var(--border-color);
+        }
+        @keyframes cardIn{
+            from{transform:translateY(90px) scale(.78) rotateX(10deg);opacity:0;filter:blur(8px)}
+            to{transform:none;opacity:1;filter:none}}
+        
+        .sp-bar{height:5px;
+            background:linear-gradient(90deg,var(--accent),#a855f7,#ec4899,#f59e0b,#22c55e,#06b6d4,var(--accent));
+            background-size:400% 100%;animation:barSlide 3s linear infinite;}
+        @keyframes barSlide{0%{background-position:0%}100%{background-position:400%}}
+        
+        .sp-hero{background:linear-gradient(155deg,var(--bg-secondary) 0%,var(--bg-tertiary) 45%,var(--bg-secondary) 100%);
+            padding:36px 44px 28px;text-align:center;position:relative;overflow:hidden;}
+        
+        .sp-hero-glow{position:absolute;width:300px;height:300px;border-radius:50%;
+            background:radial-gradient(circle,rgba(83,82,237,.12) 0%,transparent 70%);
+            top:50%;left:50%;transform:translate(-50%,-50%);
+            animation:glowPulse 4s ease-in-out infinite;}
+        @keyframes glowPulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.35)}}
+        
+        .sp-logo{width:108px;height:108px;border-radius:50%;
+            background:linear-gradient(145deg,#818cf8,var(--accent),#4f46e5);
+            display:flex;align-items:center;justify-content:center;
+            margin:0 auto 18px;position:relative;z-index:2;
+            box-shadow:0 0 0 12px rgba(83,82,237,.1),0 0 0 24px rgba(83,82,237,.05),0 20px 50px rgba(83,82,237,.4);
+            animation:logoFloat 3s ease-in-out infinite,cardIn 1.1s cubic-bezier(.34,1.4,.64,1) .08s both;
+            cursor:pointer;transition:transform .4s cubic-bezier(.34,1.6,.64,1),box-shadow .4s;}
+        .sp-logo:hover{transform:scale(1.16) rotate(-10deg)!important;
+            box-shadow:0 0 0 16px rgba(83,82,237,.14),0 0 0 32px rgba(83,82,237,.07),0 28px 60px rgba(83,82,237,.55);}
+        @keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+        .sp-logo::before{content:'';position:absolute;inset:-7px;border-radius:50%;
+            background:conic-gradient(from 0deg,var(--accent),#a855f7,#ec4899,#f59e0b,#22c55e,#06b6d4,var(--accent));
+            animation:haloSpin 3s linear infinite;z-index:-1;opacity:0.6;}
+        .sp-logo::after{content:'';position:absolute;inset:7px;border-radius:50%;background:linear-gradient(145deg,#818cf8,#4f46e5);}
+        @keyframes haloSpin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+        .sp-logo i{font-size:44px;color:#fff;position:relative;z-index:2;
+            filter:drop-shadow(0 4px 12px rgba(0,0,0,.25));
+            animation:iconBeat 2.6s ease-in-out infinite;}
+        @keyframes iconBeat{0%,100%{transform:scale(1) rotate(0deg)}50%{transform:scale(1.14) rotate(-6deg)}}
+        
+        .sp-hero-title{font-family:'DM Sans',sans-serif;font-size:32px;font-weight:700;color:var(--text-primary);
+            letter-spacing:-1px;line-height:1.15;margin-bottom:5px;
+            position:relative;z-index:2;animation:cardIn 1.1s cubic-bezier(.34,1.4,.64,1) .14s both;}
+        .sp-hero-title em{font-style:normal;
+            background:linear-gradient(90deg,var(--accent),#a855f7,#ec4899);
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+        .sp-hero-sub{font-family:'DM Sans',sans-serif;font-size:11.5px;font-weight:500;
+            color:#a5b4fc;letter-spacing:3px;text-transform:uppercase;
+            position:relative;z-index:2;animation:cardIn 1.1s cubic-bezier(.34,1.4,.64,1) .18s both;}
+        
+        .sp-body{padding:22px 40px 30px;background:var(--bg-primary);}
+        
+        .sp-badge{display:inline-flex;align-items:center;gap:7px;
+            background:linear-gradient(135deg,#f0fdf4,#dcfce7);
+            border:1.5px solid #86efac;color:#15803d;
+            font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
+            padding:5px 13px;border-radius:100px;margin-bottom:13px;
+            box-shadow:0 2px 12px rgba(34,197,94,.16);
+            animation:cardIn 1.1s cubic-bezier(.34,1.4,.64,1) .22s both;}
+        .sp-dot{width:8px;height:8px;background:#22c55e;border-radius:50%;
+            box-shadow:0 0 0 3px rgba(34,197,94,.25);animation:dotBeat 1.2s ease-in-out infinite;}
+        @keyframes dotBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.6)}}
+        
+        .sp-type{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:400;
+            color:var(--text-secondary);min-height:22px;margin-bottom:17px;
+            animation:cardIn 1.1s cubic-bezier(.34,1.4,.64,1) .26s both;}
+        .sp-cur{display:inline-block;width:2px;height:15px;background:var(--accent);
+            vertical-align:middle;margin-left:2px;animation:curBlink .7s step-end infinite;}
+        @keyframes curBlink{0%,100%{opacity:1}50%{opacity:0}}
+        
+        .sp-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:19px;
+            animation:cardIn 1.1s cubic-bezier(.34,1.4,.64,1) .3s both;}
+        .sp-pill{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:100px;
+            font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;border:1.5px solid;cursor:default;
+            transition:transform .3s cubic-bezier(.34,1.6,.64,1),box-shadow .3s;background:var(--bg-primary);}
+        .sp-pill:hover{transform:translateY(-4px) scale(1.07);box-shadow:var(--shadow-soft);}
+        .pp1{background:#fef2f2;color:#dc2626;border-color:#fecaca;}.pp1:hover{box-shadow:0 8px 20px rgba(220,38,38,.15);}
+        .pp2{background:#eff6ff;color:#2563eb;border-color:#bfdbfe;}.pp2:hover{box-shadow:0 8px 20px rgba(37,99,235,.15);}
+        .pp3{background:#faf5ff;color:#7c3aed;border-color:#ddd6fe;}.pp3:hover{box-shadow:0 8px 20px rgba(124,58,237,.15);}
+        .pp4{background:#f0fdf4;color:#16a34a;border-color:#bbf7d0;}.pp4:hover{box-shadow:0 8px 20px rgba(22,163,74,.15);}
+        .pp5{background:#fff7ed;color:#c2410c;border-color:#fed7aa;}.pp5:hover{box-shadow:0 8px 20px rgba(194,65,12,.15);}
+        
+        .sp-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:19px;
+            animation:cardIn 1.1s cubic-bezier(.34,1.4,.64,1) .34s both;}
+        .sp-stat{background:var(--bg-secondary);border:1.5px solid var(--border-color);border-radius:16px;
+            padding:13px 6px;text-align:center;
+            transition:transform .3s cubic-bezier(.34,1.6,.64,1),box-shadow .3s,border-color .3s;cursor:default;}
+        .sp-stat:hover{transform:translateY(-5px) scale(1.05);
+            box-shadow:var(--shadow-hover);border-color:var(--accent);}
+        .sp-num{font-family:'DM Sans',sans-serif;font-size:19px;font-weight:700;color:var(--accent);}
+        .sp-lbl{font-family:'DM Sans',sans-serif;font-size:9px;color:#9ca3af;
+            text-transform:uppercase;letter-spacing:1px;font-weight:500;margin-top:3px;}
+        
+        .sp-wa{display:flex;align-items:center;justify-content:center;gap:10px;
+            width:100%;padding:14px;border-radius:14px;border:none;
+            background:linear-gradient(135deg,#22c55e,#16a34a);
+            color:#fff;font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:700;
+            cursor:pointer;text-decoration:none;
+            box-shadow:0 5px 20px rgba(34,197,94,.28);
+            transition:transform .3s cubic-bezier(.34,1.6,.64,1),box-shadow .3s;
+            margin-bottom:10px;position:relative;overflow:hidden;
+            animation:cardIn 1.1s cubic-bezier(.34,1.4,.64,1) .38s both;}
+        .sp-wa::before,.sp-enter::before{content:'';position:absolute;top:0;left:-80%;width:55%;height:100%;
+            background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);
+            transform:skewX(-15deg);animation:btnShine 2.8s ease-in-out infinite;}
+        @keyframes btnShine{0%,100%{left:-80%}50%{left:130%}}
+        .sp-wa:hover{transform:translateY(-3px) scale(1.015);box-shadow:0 12px 32px rgba(34,197,94,.44);}
+        .sp-wa i,.sp-wa span,.sp-enter span,.sp-enter i{position:relative;z-index:1;}
+        
+        .sp-enter{display:flex;align-items:center;justify-content:center;gap:10px;
+            width:100%;padding:16px;border-radius:14px;border:none;
+            background:linear-gradient(135deg,var(--accent),#4f46e5);
+            color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;
+            box-shadow:0 7px 24px rgba(79,70,229,.36);
+            transition:transform .3s cubic-bezier(.34,1.6,.64,1),box-shadow .3s;
+            animation:cardIn 1.1s cubic-bezier(.34,1.4,.64,1) .42s both,enterPulse 3.5s ease-in-out infinite;
+            position:relative;overflow:hidden;}
+        .sp-enter::before{animation-delay:.5s;}
+        @keyframes enterPulse{0%,100%{box-shadow:0 7px 24px rgba(79,70,229,.36)}50%{box-shadow:0 7px 42px rgba(124,58,237,.6)}}
+        .sp-enter:hover{transform:translateY(-4px) scale(1.015);box-shadow:0 14px 40px rgba(79,70,229,.56);}
+        .sp-enter:active{transform:scale(.98);}
+        .sp-arr{transition:transform .3s cubic-bezier(.34,1.6,.64,1);}
+        .sp-enter:hover .sp-arr{transform:translateX(6px);}
+        
+        .sp-foot{text-align:center;margin-top:13px;font-family:'DM Sans',sans-serif;
+            font-size:11px;color:#9ca3af;
+            animation:cardIn 1.1s cubic-bezier(.34,1.4,.64,1) .46s both;}
+        .sp-foot a{color:var(--accent);text-decoration:none;font-weight:600;}
+        .sp-foot a:hover{text-decoration:underline;color:#3e3dbb;}
+    </style>
+</head>
+<body>
+
+<!-- ✨ SPLASHSCREEN - ENHANCED WHITE THEME ✨ -->
+<div id="splashScreen">
+    <div class="sp-orb" style="width:700px;height:500px;background:rgba(83,82,237,.06);top:-200px;left:-200px;--dx:40px;--dy:30px;--ds:1.1;animation-duration:16s;"></div>
+    <div class="sp-orb" style="width:600px;height:600px;background:rgba(168,85,247,.05);bottom:-200px;right:-160px;--dx:-30px;--dy:-20px;--ds:1.12;animation-duration:20s;animation-delay:-8s;"></div>
+    <div class="sp-orb" style="width:340px;height:340px;background:rgba(34,197,94,.05);top:28%;left:68%;--dx:20px;--dy:25px;--ds:1.08;animation-duration:14s;animation-delay:-5s;"></div>
+    <div class="sp-orb" style="width:250px;height:250px;background:rgba(245,158,11,.05);bottom:10%;left:7%;--dx:-25px;--dy:15px;--ds:1.1;animation-duration:18s;animation-delay:-11s;"></div>
+    <div class="sp-grid"></div>
+    <div id="sp-conf"></div>
+    <div class="sp-card">
+        <div class="sp-bar"></div>
+        <div class="sp-hero">
+            <div class="sp-hero-glow"></div>
+            <div class="sp-logo"><i class="fa-solid fa-rocket"></i></div>
+            <div class="sp-hero-title"><em>OnePilot</em> Tools</div>
+            <div class="sp-hero-sub">onepilottools.com</div>
+        </div>
+        <div class="sp-body">
+            <div class="sp-badge"><div class="sp-dot"></div> Pakistan Ka #1 Free Toolkit</div>
+            <div class="sp-type" id="spType"><span class="sp-cur"></span></div>
+            <div class="sp-pills">
+                <div class="sp-pill pp1"><i class="fa-solid fa-file-pdf"></i> PDF</div>
+                <div class="sp-pill pp2"><i class="fa-solid fa-image"></i> Image</div>
+                <div class="sp-pill pp3"><i class="fa-solid fa-robot"></i> AI Writing</div>
+                <div class="sp-pill pp4"><i class="fa-brands fa-whatsapp"></i> WhatsApp</div>
+                <div class="sp-pill pp5"><i class="fa-solid fa-wrench"></i> Utility</div>
+            </div>
+            <div class="sp-stats">
+                <div class="sp-stat"><div class="sp-num">50+</div><div class="sp-lbl">Tools</div></div>
+                <div class="sp-stat"><div class="sp-num">FREE</div><div class="sp-lbl">Forever</div></div>
+                <div class="sp-stat"><div class="sp-num">0</div><div class="sp-lbl">Signup</div></div>
+                <div class="sp-stat"><div class="sp-num">24/7</div><div class="sp-lbl">Online</div></div>
+            </div>
+            <a class="sp-wa" href="https://wa.me/923005682345" target="_blank">
+                <i class="fa-brands fa-whatsapp"></i>
+                <span>WhatsApp Support - 0300-5682345</span>
+            </a>
+            <button class="sp-enter" onclick="closeSplash()">
+                <i class="fa-solid fa-rocket"></i>
+                <span>Explore Karna Shuru Karein!</span>
+                <i class="fa-solid fa-arrow-right sp-arr"></i>
+            </button>
+            <div class="sp-foot">Made with &#10084; &bull; <a href="https://onepilottools.com" target="_blank">onepilottools.com</a></div>
+        </div>
+    </div>
+</div>
+
+    <div id="loadingOverlay">
+        <div class="pure-css-loader"></div>
+        <h2 style="margin-top:25px; color:var(--accent); font-weight:700;">Please wait a moment...</h2>
+        <p style="color:var(--text-secondary); font-size:15px; margin-top:5px;">Your request is being processed</p>
+    </div>
+
+    <div id="mughalModal" class="modal-overlay">
+        <div class="modal-box">
+            <i id="modalIcon" class="fa-solid fa-file-export main-icon"></i>
+            <h2 id="modalTitle">Tool Ready</h2>
+            <p id="modalDesc">Ready to process your request.</p>
+            <div id="inputSpace"></div>
+            <button class="action-btn" id="modalBtn">Proceed</button>
+            <span class="close-link" onclick="closeMughalModal()">Cancel</span>
+        </div>
+    </div>
+
+    <div id="resultModal" class="modal-overlay">
+        <div class="modal-box">
+            <i class="fa-solid fa-circle-check main-icon" style="color: #22c55e; background: #f0fdf4;"></i>
+            <h2>Process Completed</h2>
+            <p id="resultMsg">Operation was successful!</p>
+            <button class="action-btn" style="background: #22c55e;" onclick="closeResultModal()">Great, Thank You!</button>
+        </div>
+    </div>
+
+    <!-- MISSION SUCCESSFUL POPUP -->
+    <div id="missionModal">
+        <div class="mission-box">
+            <div class="mission-ribbon"></div>
+            <div class="stars-container" id="starsContainer"></div>
+            <div class="mission-check-wrap">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <div class="mission-title">Mission <span>Successful!</span> 🎉</div>
+            <p class="mission-sub" id="missionSubText">Aapki file tayar ho gayi hai!<br>Neeche button se folder khol saktay hain.</p>
+            <button class="folder-btn" id="missionFolderBtn" onclick="openDownloadsFolder()">
+                <i class="fa-solid fa-folder-open"></i>
+                Downloads Folder Kholo
+            </button>
+            <button class="mission-close-btn" onclick="closeMissionModal()">
+                Theek Hai, Shukriya! ✓
+            </button>
+        </div>
+    </div>
+
+    <!-- ✅ ORIGINAL SIDEBAR - UNCHANGED STRUCTURE -->
+    <div class="sidebar">
+        <div class="logo">OnePilot Hub</div>
+        <div class="nav-item active" onclick="setTab('popular', this)"><i class="fa-solid fa-star"></i> Popular Tools</div>
+        <div class="nav-item" onclick="setTab('pdf', this)"><i class="fa-solid fa-file-pdf"></i> PDF Tools</div>
+        <div class="nav-item" onclick="setTab('image', this)"><i class="fa-solid fa-image"></i> Image Tools</div>
+        <div class="nav-item" onclick="setTab('utility', this)"><i class="fa-solid fa-wrench"></i> Utility Tools</div>
+        <div class="nav-item" onclick="setTab('ai', this)"><i class="fa-solid fa-robot"></i> AI Writing</div>
+        <div class="nav-item" onclick="setTab('social', this)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</div>
+        <div class="nav-item" onclick="setTab('about', this)"><i class="fa-solid fa-info-circle"></i> About Us</div>
+    </div>
+
+    <div class="main-content">
+        <div class="search-area">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInp" class="search-box" placeholder="Universal Search..." onkeyup="handleSearch(event)">
+        </div>
+        <h2 id="catTitle" style="margin-bottom:30px; color:var(--text-primary);">Popular Tools</h2>
+        <div class="grid" id="box"></div>
+    </div>
+
+    <div id="viewer">
+        <button class="back-btn" onclick="closeViewer()">← Back</button>
+        <iframe id="vFrame" src=""></iframe>
+    </div>
+
+    <script>
+        // ✅ ORIGINAL TOOLS DATA - UNCHANGED
+        const windowsSettings = [
+            { name: 'Control Panel', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/11370/11370128.png', link: 'control' },
+            { name: 'Mouse Settings', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/653/653271.png', link: 'main.cpl' },
+            { name: 'Uninstall Apps', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/6266/6266514.png', link: 'appwiz.cpl' },
+            { name: 'Command Prompt', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/17693/17693164.png', link: 'cmd' },
+            { name: 'Calculator', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/2374/2374370.png', link: 'calc' },
+            { name: 'Keyboard Settings', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/4154/4154727.png', link: 'control keyboard' },
+            { name: 'Notepad', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/2272/2272423.png', link: 'notepad' },
+            { name: 'System Information', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/1865/1865273.png', link: 'msinfo32' },
+            { name: 'Task Manager', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/3082/3082827.png', link: 'taskmgr' },
+            { name: 'On-Screen Keyboard', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/13025/13025989.png', link: 'osk' },
+            { name: 'Network Settings', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/19005/19005694.png', link: 'ms-settings:network' },
+            { name: 'Firewall', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/9578/9578846.png', link: 'wf.msc' },
+            { name: 'Device Manager', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/4622/4622035.png', link: 'devmgmt.msc' },
+            { name: 'Registry Editor', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/10583/10583119.png', link: 'regedit' },
+            { name: 'Date and Time', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/10691/10691802.png', link: 'timedate.cpl' },
+            { name: 'Internet Properties', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/929/929464.png', link: 'inetcpl.cpl' },
+            { name: 'Sound Settings', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/2058/2058142.png', link: 'mmsys.cpl' },
+            { name: 'Power Options', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/3686/3686918.png', link: 'powercfg.cpl' },
+            { name: 'Network Connections', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/4207/4207024.png', link: 'ncpa.cpl' },
+            { name: 'System Properties', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/17990/17990681.png', link: 'sysdm.cpl' },
+            { name: 'Local Users', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/8385/8385918.png', link: 'lusrmgr.msc' },
+            { name: 'Computer Management', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/6024/6024190.png', link: 'compmgmt.msc' },
+            { name: 'Resource Monitor', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/6811/6811394.png', link: 'resmon' },
+            { name: 'Display Settings', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/8727/8727955.png', link: 'desk.cpl' }
+        ];
+
+        const allTools = [
+            { name: 'Age Calculator', cat: 'popular', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcu_DXzKck3WO44OkxJgnWxXonfzAyKMgh0Q&s', link: 'https://microsoftacademy.github.io/One-Pilot-Age-Analytics/' },
+            { name: 'Blur Image', cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/512/7556/7556061.png', link: 'https://microsoftacademy.github.io/One-Pilot-Blur-Image/' },
+            { name: 'Number to Words', cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/256/5238/5238462.png', link: 'https://microsoftacademy.github.io/Number-to-Word/' },        
+            { name: 'QR Generator', cat: 'popular', img: 'https://cdn-icons-png.flaticon.com/128/14021/14021409.png', link: 'https://onepilottools-developer.github.io/QR-Code-Generator/' },
+            { name: 'Merge PDF', cat: 'popular', img: 'https://cdn-icons-png.flaticon.com/128/16064/16064382.png', link: 'https://onepilottools-developer.github.io/Merge-PDF/' },
+            { name: 'PDF Compressor', cat: 'popular', img: 'https://pdfsass.com/admin/uploads/67e11d30c7819-PDFOptim5_icon.png', link: 'https://onepilottools-developer.github.io/My-PDF-Compressor/' },
+            { name: 'PDF to Image', cat: 'popular', img: 'https://pdf.net/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fpdf-to-jpg-2.ea49d711.png&w=400&q=75', link: 'https://microsoftacademy.github.io/One-Pilot-PDF-to-Image-Pro-Level/' },
+            { name: 'Image to PDF', cat: 'popular', img: 'https://pdf.net/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fjpg-to-pdf-2.a76ce594.png&w=400&q=75', link: 'https://onepilottools-developer.github.io/Image-to-PDF/' },
+            { name: 'Image Compressor', cat: 'popular', img: 'https://play-lh.googleusercontent.com/S2MQ9wPwcaop4lMF2tEo8-DRdTVDjmush-RW3mqmeNBZLGbaplS09bwOag35l-sb3o0', link: 'https://onepilottools-developer.github.io/Pro-Image-Compressor/' },  
+            { name: 'Fancy Name Generator', cat: 'utility', img: 'https://png.pngtree.com/png-vector/20250109/ourmid/pngtree-an-elegant-decorative-illustration-the-word-welcome-in-a-bold-and-png-image_15109443.png', link: 'https://microsoftacademy.github.io/Fancy-Name-Generator/' },    
+            { name: 'PDF Page Number', cat: 'popular', img: 'https://cdn-icons-png.flaticon.com/128/16168/16168415.png', link: 'https://onepilottools-developer.github.io/Pro-PDF-Page-Number/' },
+            { name: 'Delete PDF Pages', cat: 'pdf', img: 'https://play-lh.googleusercontent.com/RzNEhm9PqRO-QUxR7LH9M-Im4O2ELWWFkzLnG4TTNMgz18iNTIxBcPRuu9nto_odDQ=w240-h480-rw', link: 'https://onepilottools-developer.github.io/PDF-Page-Delete-/' },
+            { name: 'PDF Splitter', cat: 'pdf', img: 'https://lh3.googleusercontent.com/proxy/azXsH6h2Nk8jb4guIn7yR6ajTSdG5Qo_J3gIhlky0jWi9Ha-jPbjH2hTuuRVTwZyafvfjVlN3sSEad4mTRpzU4jGAWP5ozbkbfy62OgVgK2kYnBDmw', link: 'https://microsoftacademy.github.io/Split-PDF/' },
+            { name: 'PDF Watermark', cat: 'pdf', img: 'https://www.amazing-share.com/images/free-pdf-watermark-creator/icon.png', link: 'https://microsoftacademy.github.io/PDF-Watermark/' },
+            { name: 'PDF Cropper', cat: 'pdf', img: 'https://cdn.aptoide.com/imgs/4/5/3/453e0c1410049b5531451a64e78bb2ad_icon.png', link: 'https://microsoftacademy.github.io/PDF-Cropper/' }, 
+            { name: 'PDF Studio', cat: 'pdf', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZDBwxP4PtSj2Xcv9tbKSOlaTZhUWhZAykpQ&s', link: 'https://microsoftacademy.github.io/PDF-Studio/' },
+            { name: 'PDF Page Counter', cat: 'pdf', img: 'https://s.softdeluxe.com/icons/png/128/1398/1398668.png', link: 'https://onepilottools-developer.github.io/PDF-Page-Counter/' },    
+            { name: 'Rearrange PDF Pages', cat: 'pdf', img: 'https://cdn-icons-png.flaticon.com/512/3580/3580370.png', link: 'https://microsoftacademy.github.io/Rearrange-PDF-Pages/' },
+            { name: 'Grayscale PDF', cat: 'pdf', img: 'https://static.vecteezy.com/system/resources/thumbnails/052/656/899/small/black-and-white-parrot-illustration-png.png', link: 'https://onepilottools-developer.github.io/Grayscale-PDF/' },
+            { name: '30 Photos on A4', cat: 'image', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfTI84Gid67xpikzk-aDeTfx_IoHDsmPl1HQ&s', link: 'https://microsoftacademy.github.io/One-Pilot-Pro-Level-30-Photos/' },
+            { name: '6 Photos 4*6', cat: 'image', img: 'https://onepilottools.com/wp-content/uploads/2026/01/crop-1.jpg', link: 'https://microsoftacademy.github.io/One-Pilot-6-Passport-Photos/' },
+            { name: '8 Photos 4*6', cat: 'image', img: 'https://i.pinimg.com/736x/1d/93/b6/1d93b67e77389cfbb3d65f0726875ad9.jpg', link: 'https://microsoftacademy.github.io/One-Pilot-8-Passport-Photos-on-4-6-Sheet/' },
+            { name: 'Image Cropper', cat: 'image', img: 'https://cropper.madza.dev/scissors.png', link: 'https://onepilottools-developer.github.io/Pro-Image-Cropper/' },
+            { name: 'Image to Sketch', cat: 'image', img: 'https://png.pngtree.com/png-clipart/20241111/original/pngtree-pencil-sketch-drawing-of-a-cute-cat-animal-isolated-on-transparent-png-image_16895725.png', link: 'https://onepilottools-developer.github.io/Pro-Image-to-Sketch/' },
+            { name: 'Image Transparency', cat: 'image', img: 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQ5121Ie66lDcKgA4tFvbP0en1ClKDez7bxEOMNvnK4qpBd5PaS', link: 'https://microsoftacademy.github.io/Image-Transparency/' }, 
+            { name: 'Image Converter', cat: 'image', img: 'https://cdn-icons-png.flaticon.com/128/13434/13434909.png', link: 'https://onepilottools-developer.github.io/Pro-Image-converter/' },
+            { name: 'Grayscale Image', cat: 'image', img: 'https://cdn-icons-png.flaticon.com/128/10097/10097500.png', link: 'https://microsoftacademy.github.io/Grayscale-Image/' },
+            { name: 'Image Round Corner', cat: 'image', img: 'https://cdn-icons-png.flaticon.com/128/1014/1014817.png', link: 'https://microsoftacademy.github.io/Image-Round-Corner/' },
+            { name: 'Watermark Photos', cat: 'image', img: 'https://cdn-icons-png.flaticon.com/128/12709/12709451.png', link: 'https://microsoftacademy.github.io/Text-on-Image/' },
+            { name: 'Image Filter Studio', cat: 'image', img: 'https://d1nhio0ox7pgb.cloudfront.net/_img/v_collection_png/512x512/shadow/photographic_filters.png', link: 'https://microsoftacademy.github.io/My-Filter-Studio/' },
+            { name: 'Rotate Image', cat: 'image', img: 'https://cdn-icons-png.flaticon.com/512/6815/6815945.png', link: 'https://microsoftacademy.github.io/Rotate-Image/' },  
+            { name: 'Email Writer', cat: 'ai', img: 'https://cdn-icons-png.flaticon.com/128/5968/5968534.png', link: 'https://onepilottools-developer.github.io/Gmail-Writer/' },
+            { name: 'Bulk File Renamer', cat: 'utility', img: 'https://www.freeiconspng.com/uploads/wonderful-pdf-icon-logo-6.png', link: 'https://onepilottools-developer.github.io/Pro-and-Advanced-Bulk-File-Renamer/' },
+            { name: 'JPG to PNG', cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/128/13434/13434934.png', link: 'https://microsoftacademy.github.io/JPG-to-PNG/' },
+            { name: 'PNG to JPG', cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/128/15201/15201339.png', link: 'https://microsoftacademy.github.io/Png-to-JPG/#' },
+            { name: 'Image Resizer', cat: 'popular', img: 'https://store-images.s-microsoft.com/image/apps.38202.13565312217092730.6bd81ec1-1cab-4feb-8d0e-f532f9713e34.1ada795a-5c3d-4e87-a813-0c51e0b8dbf5?h=210', link: 'https://microsoftacademy.github.io/One-Pilot-Image-Converter/' },
+            { name: 'NIC', cat: 'utility', img: 'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcT7LTGZ25hFGdM-pkK-6dg3zwyrar5ZS_Xhu1J9CK16wQNLkjYx', link: 'https://microsoftacademy.github.io/WhatsApp-NIC-Front-Back-/' },          
+            { name: 'Job Studio', cat: 'utility', img: 'https://www.freepnglogos.com/uploads/camera-logo-png/camera-logo-download-clipart-24.png', link: 'https://microsoftacademy.github.io/Job-Studio/' },       
+            { name: 'Loan Calculator', cat: 'utility', img: 'https://static.vecteezy.com/system/resources/thumbnails/058/487/394/small/3d-modern-calculator-with-percentage-sign-icon-png.png', link: 'https://microsoftacademy.github.io/EMI-Loan-Calculator-PKR-/' },
+            { name: 'Secret Message', cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/512/7677/7677735.png', link: 'https://microsoftacademy.github.io/One-Pilot-Secret-Message-Pro/' },              
+            { name: 'Percentage Calculator', cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/512/7909/7909329.png', link: 'https://microsoftacademy.github.io/Smart-Percentage-Calculator/' },
+            { name: 'Discount Calculator', cat: 'utility', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2F7vH46yGn0jlEVDXnQ5g0mhkLJpovAHyDw&s', link: 'https://microsoftacademy.github.io/Discount-Calculator/' },       
+            { name: 'Unit Converter', cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/128/16515/16515400.png', link: 'https://microsoftacademy.github.io/Unit-Converter/' },                
+            { name: 'CV Points Generator', cat: 'ai', img: 'https://cdn-icons-png.freepik.com/512/11528/11528303.png', link: 'https://microsoftacademy.github.io/CV-Points-Generator/' },
+            { name: 'Experience Generator', cat: 'ai', img: 'https://i0.wp.com/experiencearchit3cts.com/wp-content/uploads/2024/09/recommend.png?resize=512,512&ssl=1', link: 'https://microsoftacademy.github.io/Experience-Generator/' },
+            { name: 'Book Cover Downloader', cat: 'ai', img: 'https://cdn-icons-png.flaticon.com/512/11462/11462534.png', link: 'https://microsoftacademy.github.io/Book-Cover-Downloader/' },
+            { name: 'Grammar Checker', cat: 'ai', img: 'https://cdn-icons-png.flaticon.com/128/12206/12206031.png', link: 'https://onepilottools-developer.github.io/One-Pilot-Grammar-Checker/' },         
+            { name: 'Text Summarizer', cat: 'ai', img: 'https://images.digitaltools.nz/summarify/icon_small.png', link: 'https://onepilottools-developer.github.io/OnePilot-AI-Summarizer/' },
+            { name: 'Url to Image', cat: 'ai', img: 'https://thumbs.dreamstime.com/b/internet-logo-19273000.jpg', link: 'https://onepilottools-developer.github.io/URL-to-Image/' },
+            { name: 'Career Roadmap', cat: 'ai', img: 'https://cdn-icons-png.flaticon.com/128/5382/5382037.png', link: 'https://onepilottools-developer.github.io/Career-Roadmap/' },
+            { name: 'Slide Master', cat: 'ai', img: 'https://png.pngtree.com/png-vector/20240524/ourmid/pngtree-instagram-app-icon-colorful-camera-flat-icon-flat-design-vector-logo-png-image_6922830.png', link: 'https://onepilottools-developer.github.io/Slide-Master/' },   
+            { name: 'Notepad Editor', cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/128/4371/4371047.png', link: 'https://microsoftacademy.github.io/Pro-Notepad/' },      
+            { name: 'Driving License Cropper', cat: 'utility', img: 'https://www.centralmndrivingacademy.com/images/btw.png', link: 'https://microsoftacademy.github.io/Driving-License-Cropper/' },      
+            { name: 'Youtube Thumbnil Downloader', cat: 'utility', img: 'https://images.vexels.com/media/users/3/141531/isolated/preview/258bb008cb4673875e33d9ecd1c31da9-youtube-round-metal-button.png?w=360', link: 'https://onepilottools.com/youtube-thumbnail-generator/' },      
+            { name: 'Customer Connect', cat: 'social', img: 'https://cdn-icons-png.flaticon.com/128/3536/3536445.png', link: 'https://microsoftacademy.github.io/Customer-Connect/' },
+            { name: 'WhatsApp QR Code', cat: 'social', img: 'https://downloadr2.apkmirror.com/wp-content/uploads/2018/03/5ab00b70e3906.png', link: 'https://microsoftacademy.github.io/WhatsApp-QR-Code-Generator/' },  
+            { name: 'WhatsApp Editor', cat: 'social', img: 'https://cdn-icons-png.flaticon.com/128/2504/2504957.png', link: 'https://microsoftacademy.github.io/WhatsApp-Pro-Editor/' },  
+            { name: 'Developer Portfolio', cat: 'about', img: 'https://cdn-icons-png.freepik.com/256/16382/16382301.png?semt=ais_white_label', link: 'https://microsoftacademy.github.io/About-One-Pilot/' },
+            { name: 'Our Mission', cat: 'about', img: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcS--F7H3rl2fgGwhVvJmU7lPyx_QS74equb-9tPC4Rmg3rOTAKy', link: 'https://onepilottools-developer.github.io/Our-Mission/' },
+            { name: 'Contact Us', cat: 'about', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQi1OcRoXEuuCxuaSd9GPC9heMmAl59lXTwvDZqTYOrhmdVR1Ea', link: 'https://onepilottools-developer.github.io/Contact-Us/' }
+        ];
+
+        windowsSettings.forEach(setting => allTools.push(setting));
+        let tab = 'popular';
+
+        // ✅ ORIGINAL FUNCTIONS - UNCHANGED LOGIC
+        function spawnStars() {
+            const container = document.getElementById('starsContainer');
+            container.innerHTML = '';
+            const colors = ['#22c55e', '#5352ed', '#f59e0b', '#ef4444', '#a855f7', '#06b6d4'];
+            for (let i = 0; i < 12; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 90 + 5 + '%';
+                star.style.bottom = '10%';
+                star.style.background = colors[Math.floor(Math.random() * colors.length)];
+                star.style.animationDelay = Math.random() * 2 + 's';
+                star.style.animationDuration = (2 + Math.random() * 2) + 's';
+                star.style.width = star.style.height = (6 + Math.random() * 8) + 'px';
+                container.appendChild(star);
+            }
+        }
+
+        function showMissionSuccess(fileName) {
+            const subText = fileName ? `"${fileName}" tayar ho gayi hai! 🎉<br>Neeche button se Downloads folder khol saktay hain.` : 'Aapki file tayar ho gayi hai! 🎉<br>Neeche button se Downloads folder khol saktay hain.';
+            document.getElementById('missionSubText').innerHTML = subText;
+            document.getElementById('missionModal').style.display = 'flex';
+            spawnStars();
+        }
+        function closeMissionModal() { document.getElementById('missionModal').style.display = 'none'; }
+        function openDownloadsFolder() {
+            try {
+                const a = document.createElement('a');
+                a.href = 'file:///C:/Users/' + (navigator.userAgent || 'User') + '/Downloads';
+                window.open('about:blank', '_blank').document.write('<html><head><title>Downloads</title></head><body style="font-family:Poppins,sans-serif;background:#fff;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;"><div style="background:#fff;padding:40px;border-radius:20px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.1);"><div style="font-size:60px;margin-bottom:15px;">📁</div><h2 style="color:#5352ed;margin-bottom:10px;">Downloads Folder</h2><p style="color:#666;margin-bottom:20px;">File yahan milegi:</p><code style="background:#f5f3ff;color:#5352ed;padding:10px 20px;border-radius:10px;font-size:16px;display:block;">C:\\Users\\[YourName]\\Downloads</code><p style="color:#94a3b8;margin-top:15px;font-size:13px;">Windows Explorer mein paste karein ya<br><b>Win + E</b> dabayen, phir Downloads click karein</p></div></body></html>');
+            } catch(e) { alert('📁 Downloads folder:\nC:\\Users\\[YourName]\\Downloads\n\nYa: Win + E dabayen → Downloads'); }
+            closeMissionModal();
+        }
+
+        function setupDownloadDetection() {
+            window.addEventListener('message', function(event) { if (event.data && event.data.type === 'DOWNLOAD_COMPLETE') { showMissionSuccess(event.data.fileName || ''); } });
+            const origCreateObjectURL = URL.createObjectURL.bind(URL);
+            URL.createObjectURL = function(blob) { const url = origCreateObjectURL(blob); setTimeout(() => showMissionSuccess(''), 800); return url; };
+        }
+
+        function openMughalModal(title, desc, icon, isInput, callback) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalDesc').innerText = desc;
+            document.getElementById('modalIcon').className = "fa-solid " + icon + " main-icon";
+            document.getElementById('inputSpace').innerHTML = isInput ? '<input type="text" id="mInp" placeholder="Enter details here...">' : '';
+            document.getElementById('mughalModal').style.display = 'flex';
+            document.getElementById('modalBtn').onclick = () => { closeMughalModal(); callback(isInput ? document.getElementById('mInp').value : true); };
+        }
+        function closeMughalModal() { document.getElementById('mughalModal').style.display = 'none'; }
+        function showResult(msg) { document.getElementById('resultMsg').innerHTML = msg; document.getElementById('resultModal').style.display = 'flex'; }
+        function closeResultModal() { document.getElementById('resultModal').style.display = 'none'; }
+        function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
+        function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
+
+        function render(filter = "") {
+            const grid = document.getElementById('box'); grid.innerHTML = '';
+            let filtered;
+            if (filter !== "") { filtered = allTools.filter(t => t.name.toLowerCase().includes(filter.toLowerCase())); document.getElementById('catTitle').innerText = "Search Results"; }
+            else { filtered = allTools.filter(t => t.cat === tab); document.getElementById('catTitle').innerText = document.querySelector('.nav-item.active').innerText; }
+            filtered.forEach(t => { grid.innerHTML += `<div class="card" onclick="smartOpen('${t.link}')"><div class="img-box"><img src="${t.img}"></div><div class="text-box"><h3>${t.name}</h3></div><div class="card-btn">Open Tool</div></div>`; });
+        }
+
+        function smartOpen(url) {
+            const windowsCommands = ['control', 'main.cpl', 'appwiz.cpl', 'cmd', 'calc', 'control keyboard', 'notepad', 'msinfo32', 'taskmgr', 'osk', 'ms-settings:network', 'wf.msc', 'devmgmt.msc', 'regedit', 'timedate.cpl', 'inetcpl.cpl', 'mmsys.cpl', 'powercfg.cpl', 'ncpa.cpl', 'sysdm.cpl', 'lusrmgr.msc', 'compmgmt.msc', 'resmon', 'desk.cpl'];
+            if (windowsCommands.includes(url)) { showResult(`<h3>🔧 Windows Setting</h3><p>Yeh command run karein: <b>${url}</b><br>Run (Win+R) mein paste karein.</p>`); return; }
+            if (url.startsWith("http")) { document.getElementById('viewer').style.display = 'block'; document.getElementById('vFrame').src = url; return; }
+            if (url === 'bulk_downloader') { openMughalModal("📸 Bulk Image Downloader", "Website URL paste karein (jaise: https://example.com):", "fa-cloud-arrow-down", true, async (websiteUrl) => { if(!websiteUrl) { showResult("<h3 style='color:red;'>❌ URL to dalo bhai!</h3>"); return; } window.open(`https://bulkimage.com/?url=${encodeURIComponent(websiteUrl)}`, '_blank'); showResult("<h3 style='color:green;'>✅ Bulk downloader opened!</h3>"); }); return; }
+            if (url === 'folder_organizer') { openMughalModal("Folder Organizer", "Organize messy downloads/folders into categories.", "fa-folder-tree", false, async () => { window.open('https://www.niftyfolders.com/', '_blank'); showResult("<h3 style='color:green;'>✅ Folder organizer opened!</h3>"); }); return; }
+            if (url) { window.open(url, '_blank'); } else { showResult("<h3 style='color:orange;'>⚠️ Tool not available</h3>"); }
+        }
+
+        function closeViewer() { document.getElementById('viewer').style.display = 'none'; document.getElementById('vFrame').src = ''; }
+        function handleSearch(e) { let v = e.target.value; if (v === "") { setTab('popular', document.querySelector('.nav-item')); return; } render(v); if (e.key === 'Enter' && v !== '') { let f = allTools.find(i => i.name.toLowerCase().includes(v.toLowerCase())); if (f) smartOpen(f.link); } }
+        function setTab(c, e) { tab = c; document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); e.classList.add('active'); render(); }
+
+        function setupIframeDownloadListener() {
+            const iframe = document.getElementById('vFrame');
+            iframe.addEventListener('load', function() {
+                try {
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    iframeDoc.addEventListener('click', function(e) {
+                        const target = e.target.closest('a[download], button');
+                        if (!target) return;
+                        if (target.hasAttribute('download') || (target.href && (target.href.includes('blob:') || target.href.includes('.pdf') || target.href.includes('.jpg') || target.href.includes('.png') || target.href.includes('.zip')))) { setTimeout(() => showMissionSuccess(target.getAttribute('download') || ''), 1200); }
+                        const btnText = (target.innerText || target.textContent || '').toLowerCase();
+                        if (btnText.includes('download') || btnText.includes('save') || btnText.includes('convert') || btnText.includes('export') || btnText.includes('generate')) { setTimeout(() => showMissionSuccess(''), 2000); }
+                    }, true);
+                    const iframeURL = iframe.contentWindow.URL;
+                    if (iframeURL && iframeURL.createObjectURL) { const origFn = iframeURL.createObjectURL.bind(iframeURL); iframeURL.createObjectURL = function(blob) { const result = origFn(blob); setTimeout(() => showMissionSuccess(''), 900); return result; }; }
+                } catch(e) {}
+            });
+        }
+        
+        function initConf(){ const c=document.getElementById('sp-conf'); if(!c)return; const cols=['rgba(83,82,237,.25)','rgba(168,85,247,.22)','rgba(34,197,94,.22)','rgba(245,158,11,.22)','rgba(239,68,68,.18)','rgba(6,182,212,.22)','rgba(236,72,153,.2)']; for(let i=0;i<22;i++){ const s=document.createElement('div'); s.className='sp-conf'; const sz=5+Math.random()*16; s.style.cssText=['left:'+(Math.random()*100)+'%','width:'+sz+'px','height:'+sz+'px','background:'+cols[Math.floor(Math.random()*cols.length)],'border-radius:'+(Math.random()>.4?'50%':'6px'),'animation-duration:'+(10+Math.random()*14)+'s','animation-delay:'+(Math.random()*12)+'s'].join(';'); c.appendChild(s); } }
+        function initTypewriter(){ const el=document.getElementById('spType'); if(!el)return; const lines=['Aapka All-in-One Digital Toolkit','PDF, Image, AI - Sab Kuch Free!','Koi Signup Nahi, Koi Limit Nahi!','50+ Tools - Ek Hi Jagah']; let li=0,ci=0,typing=true; el.innerHTML='<span class="sp-cur"></span>'; function tick(){ const line=lines[li]; if(typing){ if(ci<=line.length){el.innerHTML=line.slice(0,ci)+'<span class="sp-cur"></span>';ci++;setTimeout(tick,55);} else{typing=false;setTimeout(tick,1800);} }else{ if(ci>0){el.innerHTML=line.slice(0,ci-1)+'<span class="sp-cur"></span>';ci--;setTimeout(tick,26);} else{typing=true;li=(li+1)%lines.length;setTimeout(tick,350);} } } setTimeout(tick,800); }
+        function closeSplash(){ const el=document.getElementById('splashScreen'); el.classList.add('hide'); setTimeout(()=>{el.style.display='none';},900); }
+        
+        window.onload = () => { render(); initConf(); initTypewriter(); setupDownloadDetection(); setupIframeDownloadListener(); };
+    </script>
+</body>
+</html>
