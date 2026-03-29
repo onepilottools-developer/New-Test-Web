@@ -36,24 +36,26 @@
 
         .main-content { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; }
         
-        /* 🔥 ANIMATED INSTRUCTION LINE - ALWAYS VISIBLE 🔥 */
+        /* 🔥 GREEN ATTRACTIVE INSTRUCTION BUTTON 🔥 */
         .instruction-banner {
             width: 100%;
-            max-width: 800px;
-            background: linear-gradient(135deg, rgba(83,82,237,0.08), rgba(122,122,255,0.05));
-            border: 2px solid rgba(83,82,237,0.2);
-            border-radius: 16px;
-            padding: 16px 24px;
+            max-width: 900px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
+            border: none;
+            border-radius: 20px;
+            padding: 20px 30px;
             margin-bottom: 30px;
             text-align: center;
             position: relative;
-            overflow: hidden;
-            animation: bannerPulse 3s ease-in-out infinite;
+            overflow: visible;
+            box-shadow: 0 8px 30px rgba(34, 197, 94, 0.3), 0 0 0 1px rgba(255,255,255,0.1) inset;
+            animation: bannerFloat 3s ease-in-out infinite;
+            flex-shrink: 0;
         }
         
-        @keyframes bannerPulse {
-            0%, 100% { box-shadow: 0 4px 20px rgba(83,82,237,0.15); transform: translateY(0); }
-            50% { box-shadow: 0 8px 30px rgba(83,82,237,0.25); transform: translateY(-2px); }
+        @keyframes bannerFloat {
+            0%, 100% { transform: translateY(0); box-shadow: 0 8px 30px rgba(34, 197, 94, 0.3), 0 0 0 1px rgba(255,255,255,0.1) inset; }
+            50% { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(34, 197, 94, 0.4), 0 0 0 1px rgba(255,255,255,0.15) inset; }
         }
         
         .instruction-banner::before {
@@ -63,8 +65,9 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: bannerShine 2.5s ease-in-out infinite;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            animation: bannerShine 3s ease-in-out infinite;
+            pointer-events: none;
         }
         
         @keyframes bannerShine {
@@ -72,41 +75,137 @@
             50% { left: 100%; }
         }
         
+        .instruction-banner::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, #22c55e, #16a34a, #15803d, #22c55e);
+            border-radius: 22px;
+            z-index: -1;
+            opacity: 0;
+            animation: borderGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.5; }
+        }
+        
         .instruction-text {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
-            color: var(--accent);
+            color: #ffffff;
             position: relative;
             z-index: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
+            flex-wrap: wrap;
+            line-height: 1.6;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            white-space: normal;
+            word-wrap: break-word;
         }
         
         .instruction-text i {
             animation: iconBounce 1.5s ease-in-out infinite;
+            font-size: 18px;
         }
         
         @keyframes iconBounce {
             0%, 100% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-3px) rotate(-5deg); }
-            75% { transform: translateY(3px) rotate(5deg); }
+            25% { transform: translateY(-4px) rotate(-8deg); }
+            75% { transform: translateY(4px) rotate(8deg); }
         }
         
         .highlight {
-            background: linear-gradient(135deg, var(--accent), var(--accent-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            background: rgba(255,255,255,0.25);
+            padding: 2px 10px;
+            border-radius: 8px;
             font-weight: 700;
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .search-area { width: 100%; max-width: 600px; position: relative; margin-bottom: 40px; }
-        .search-box { width: 100%; padding: 15px 60px; border-radius: 50px; border: 1px solid #e2e8f0; outline: none; font-size: 16px; box-shadow: var(--shadow-soft); transition: all 0.25s ease; background: var(--bg-primary); }
-        .search-box:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow), var(--shadow-hover); transform: translateY(-2px); }
-        .search-area i { position: absolute; left: 20px; top: 18px; color: var(--accent); font-size: 20px; transition: transform 0.25s ease; }
-        .search-box:focus + i { transform: scale(1.1); }
+        /* 🔥 STICKY SEARCH BAR 🔥 */
+        .search-area {
+            width: 100%;
+            max-width: 600px;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            margin-bottom: 40px;
+            flex-shrink: 0;
+        }
+        
+        .search-area::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(180deg, var(--bg-primary) 0%, rgba(255,255,255,0.95) 50%, transparent 100%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .search-area.sticky::before {
+            opacity: 1;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 15px 60px;
+            border-radius: 50px;
+            border: 1px solid #e2e8f0;
+            outline: none;
+            font-size: 16px;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.25s ease;
+            background: var(--bg-primary);
+        }
+        
+        .search-box:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-glow), var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+        
+        .search-area.sticky .search-box {
+            box-shadow: 0 8px 30px rgba(83, 82, 237, 0.2), 0 0 0 1px rgba(83,82,237,0.1);
+            background: rgba(255,255,255,0.98);
+            backdrop-filter: blur(10px);
+        }
+        
+        .search-area i {
+            position: absolute;
+            left: 20px;
+            top: 18px;
+            color: var(--accent);
+            font-size: 20px;
+            transition: transform 0.25s ease;
+        }
+        
+        .search-box:focus + i {
+            transform: scale(1.1);
+        }
+        
+        .search-area.sticky i {
+            color: var(--accent);
+            animation: searchPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes searchPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
 
         .grid { display: grid; grid-template-columns: repeat(3, 220px); gap: 25px; width: 100%; }
 
@@ -403,7 +502,7 @@
     </div>
 
     <div class="main-content">
-        <!-- 🔥 ANIMATED INSTRUCTION LINE - ALWAYS VISIBLE 🔥 -->
+        <!-- GREEN ATTRACTIVE INSTRUCTION BUTTON -->
         <div class="instruction-banner">
             <div class="instruction-text">
                 <i class="fa-solid fa-circle-info"></i>
@@ -412,10 +511,12 @@
             </div>
         </div>
         
-        <div class="search-area">
+        <!-- 🔥 STICKY SEARCH BAR 🔥 -->
+        <div class="search-area" id="searchArea">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" id="searchInp" class="search-box" placeholder="Universal Search..." onkeyup="handleSearch(event)">
         </div>
+        
         <h2 id="catTitle" style="margin-bottom:30px; color:var(--text-primary);">Popular Tools</h2>
         <div class="grid" id="box"></div>
     </div>
@@ -554,11 +655,31 @@
         function handleSearch(e) { let v = e.target.value; if (v === "") { setTab('popular', document.querySelector('.nav-item')); return; } render(v); if (e.key === 'Enter' && v !== '') { let f = allTools.find(i => i.name.toLowerCase().includes(v.toLowerCase())); if (f) smartOpen(f.link); } }
         function setTab(c, e) { tab = c; document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); e.classList.add('active'); render(); }
         
+        // 🔥 STICKY SEARCH BAR SCROLL DETECTION 🔥
+        function initStickySearch() {
+            const searchArea = document.getElementById('searchArea');
+            const mainContent = document.querySelector('.main-content');
+            
+            if (searchArea && mainContent) {
+                mainContent.addEventListener('scroll', function() {
+                    const scrollY = this.scrollTop;
+                    const instructionBanner = document.querySelector('.instruction-banner');
+                    const bannerHeight = instructionBanner ? instructionBanner.offsetHeight + 30 : 0;
+                    
+                    if (scrollY > bannerHeight) {
+                        searchArea.classList.add('sticky');
+                    } else {
+                        searchArea.classList.remove('sticky');
+                    }
+                });
+            }
+        }
+        
         function initConf(){ const c=document.getElementById('sp-conf'); if(!c)return; const cols=['rgba(83,82,237,.25)','rgba(168,85,247,.22)','rgba(34,197,94,.22)','rgba(245,158,11,.22)','rgba(239,68,68,.18)','rgba(6,182,212,.22)','rgba(236,72,153,.2)']; for(let i=0;i<22;i++){ const s=document.createElement('div'); s.className='sp-conf'; const sz=5+Math.random()*16; s.style.cssText=['left:'+(Math.random()*100)+'%','width:'+sz+'px','height:'+sz+'px','background:'+cols[Math.floor(Math.random()*cols.length)],'border-radius:'+(Math.random()>.4?'50%':'6px'),'animation-duration:'+(10+Math.random()*14)+'s','animation-delay:'+(Math.random()*12)+'s'].join(';'); c.appendChild(s); } }
         function initTypewriter(){ const el=document.getElementById('spType'); if(!el)return; const lines=['Aapka All-in-One Digital Toolkit','PDF, Image, AI - Sab Kuch Free!','Koi Signup Nahi, Koi Limit Nahi!','50+ Tools - Ek Hi Jagah']; let li=0,ci=0,typing=true; el.innerHTML='<span class="sp-cur"></span>'; function tick(){ const line=lines[li]; if(typing){ if(ci<=line.length){el.innerHTML=line.slice(0,ci)+'<span class="sp-cur"></span>';ci++;setTimeout(tick,55);} else{typing=false;setTimeout(tick,1800);} }else{ if(ci>0){el.innerHTML=line.slice(0,ci-1)+'<span class="sp-cur"></span>';ci--;setTimeout(tick,26);} else{typing=true;li=(li+1)%lines.length;setTimeout(tick,350);} } } setTimeout(tick,800); }
         function closeSplash(){ const el=document.getElementById('splashScreen'); el.classList.add('hide'); setTimeout(()=>{el.style.display='none';},900); }
         
-        window.onload = () => { render(); initConf(); initTypewriter(); };
+        window.onload = () => { render(); initConf(); initTypewriter(); initStickySearch(); };
     </script>
 </body>
 </html>
