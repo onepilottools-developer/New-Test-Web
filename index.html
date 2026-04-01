@@ -46,34 +46,6 @@
         /* ── MAIN CONTENT ── */
         .main-content { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; }
         
-        /* Compact Green instruction banner */
-        .instruction-banner {
-            width: 100%; max-width: 900px;
-            background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
-            border-radius: 16px; padding: 12px 20px; margin-bottom: 20px;
-            text-align: center; position: relative; overflow: hidden;
-            box-shadow: 0 6px 20px rgba(34,197,94,0.25);
-            animation: bannerFloat 3s ease-in-out infinite; flex-shrink: 0;
-        }
-        @keyframes bannerFloat {
-            0%,100% { transform: translateY(0); box-shadow: 0 6px 20px rgba(34,197,94,0.25); }
-            50% { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(34,197,94,0.35); }
-        }
-        .instruction-banner::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-            animation: bannerShine 3s ease-in-out infinite; pointer-events: none;
-        }
-        @keyframes bannerShine { 0%,100% { left: -100%; } 50% { left: 100%; } }
-        .instruction-text {
-            font-size: 13px; font-weight: 600; color: #fff; position: relative; z-index: 1;
-            display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; line-height: 1.4;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.15);
-        }
-        .instruction-text i { animation: iconBounce 1.5s ease-in-out infinite; font-size: 16px; }
-        @keyframes iconBounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
-        .highlight { background: rgba(255,255,255,0.25); padding: 2px 8px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(255,255,255,0.3); }
-
         /* Search - Compact */
         .search-area { width: 100%; max-width: 500px; position: sticky; top: 15px; z-index: 100; margin-bottom: 25px; flex-shrink: 0; }
         .search-box { width: 100%; padding: 12px 50px; border-radius: 40px; border: 1px solid #e2e8f0; outline: none; font-size: 14px; box-shadow: var(--shadow-soft); transition: all 0.25s ease; background: var(--bg-primary); }
@@ -177,6 +149,176 @@
         .action-btn:hover { background: #3e3dbb; transform: scale(1.02); box-shadow: 0 8px 25px rgba(83,82,237,0.3); }
         .close-link { display: block; margin-top: 12px; color: #94a3b8; cursor: pointer; font-size: 13px; transition: color 0.2s ease; }
         .close-link:hover { color: var(--accent); }
+
+        /* 🎉 FULL SCREEN OVERLAY POPUP */
+        #popupOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 9999999;
+            overflow: hidden;
+        }
+        
+        #instructionPopup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            padding: 50px 40px;
+            border-radius: 32px;
+            box-shadow: 0 40px 120px rgba(0, 0, 0, 0.5), 
+                        0 0 0 1px rgba(255,255,255,0.2) inset;
+            text-align: center;
+            max-width: 580px;
+            width: 90%;
+            animation: popupEnter 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #instructionPopup::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotateBg 20s linear infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes rotateBg {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        #instructionPopup:hover {
+            transform: translate(-50%, -50%) scale(1.02);
+            box-shadow: 0 50px 140px rgba(0, 0, 0, 0.6),
+                        0 0 0 1px rgba(255,255,255,0.3) inset;
+        }
+        
+        @keyframes popupEnter {
+            to {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .popup-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .popup-icon-wrapper {
+            width: 90px;
+            height: 90px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(255,255,255,0.3);
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
+            50% { transform: scale(1.08); box-shadow: 0 0 0 25px rgba(255,255,255,0); }
+        }
+        
+        .popup-icon {
+            font-size: 42px;
+            color: #fff;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .popup-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            letter-spacing: -0.5px;
+        }
+        
+        .popup-message-card {
+            background: rgba(255,255,255,0.98);
+            border-radius: 20px;
+            padding: 30px 35px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        
+        .popup-message {
+            font-size: 16px;
+            color: #1a1a1a;
+            line-height: 2;
+            font-weight: 600;
+        }
+        
+        .highlight-box {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            margin: 0 6px;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            font-size: 17px;
+        }
+        
+        .text-divider {
+            display: block;
+            margin: 15px 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
+        }
+        
+        .popup-close {
+            background: rgba(255,255,255,0.98);
+            color: #667eea;
+            border: none;
+            padding: 16px 45px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .popup-close:hover {
+            background: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .popup-close:active {
+            transform: translateY(-1px);
+        }
+        
+        .popup-close i {
+            font-size: 18px;
+        }
 
         /* Loading */
         #loadingOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 9999999; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
@@ -346,6 +488,33 @@
     </div>
 </div>
 
+<!-- 🎉 FULL SCREEN OVERLAY -->
+<div id="popupOverlay">
+    <!-- 🎉 ENHANCED: Animated Instruction Popup -->
+    <div id="instructionPopup">
+        <div class="popup-content">
+            <div class="popup-icon-wrapper">
+                <i class="fa-solid fa-bell popup-icon"></i>
+            </div>
+            <div class="popup-title">⚠️ Important Note</div>
+            
+            <div class="popup-message-card">
+                <div class="popup-message">
+                    Bahi sirf <span class="highlight-box">(1) bar</span><br>
+                    Convert/Download button pay click kry<br>
+                    <span class="text-divider"></span>
+                    or apni file <span class="highlight-box">Download Folder</span> may daikhe
+                </div>
+            </div>
+            
+            <button class="popup-close" onclick="closeInstructionPopup()">
+                <i class="fa-solid fa-check-circle"></i>
+                Got it, Thanks!
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- Loading Overlay -->
 <div id="loadingOverlay">
     <div class="pure-css-loader"></div>
@@ -397,13 +566,7 @@
 
 <!-- MAIN CONTENT -->
 <div class="main-content">
-    <div class="instruction-banner">
-        <div class="instruction-text">
-            <i class="fa-solid fa-circle-info"></i>
-            <span>Sirf <span class="highlight">(1) bar</span> Download/Convert button pay click kry, or <span class="highlight">Download Folder</span> may apni file daikhye!</span>
-            <i class="fa-solid fa-download"></i>
-        </div>
-    </div>
+    <!-- Green banner removed as requested -->
     
     <div class="search-area" id="searchArea">
         <i class="fa-solid fa-magnifying-glass"></i>
@@ -547,8 +710,8 @@
       
         // ══ ONE PILOT BOOKMARKS (6 cards — open in NEW TAB) ══
         { name: 'Video Guide',       cat: 'bookmarks', img: 'https://cdn-icons-png.flaticon.com/128/7875/7875375.png', link: 'https://onepilottools.com' },
-        { name: 'OnePilot Bookmarks (Link)',             cat: 'bookmarks', img: 'https://cdn-icons-png.flaticon.com/128/2702/2702602.png',    link: 'https://onepilottools-developer.github.io/OnePilot-Bookmarks/' },
-        { name: 'Redirect New Tab (Extension)',            cat: 'bookmarks', img: 'https://cdn.shopify.com/app-store/listing_images/cacdb6088b2158ea99761004a3f94dbc/icon/CJqiuZa6mJIDEAE=.png', link: 'https://chromewebstore.google.com/detail/new-tab-redirect/icpgjfneehieebagbmdbhnlpiopdcmna?pli=1' },
+        { name: 'OnePilot Bookmarks',             cat: 'bookmarks', img: 'https://cdn-icons-png.flaticon.com/128/2702/2702602.png',    link: 'https://onepilot-bookmarks.netlify.app/' },
+        { name: 'Redirect New Tab',            cat: 'bookmarks', img: 'https://cdn.shopify.com/app-store/listing_images/cacdb6088b2158ea99761004a3f94dbc/icon/CJqiuZa6mJIDEAE=.png', link: 'https://chromewebstore.google.com/detail/new-tab-redirect/icpgjfneehieebagbmdbhnlpiopdcmna?pli=1' },
         
     ];
 
@@ -572,6 +735,26 @@
     function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
     function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
     function closeViewer() { document.getElementById('viewer').style.display = 'none'; document.getElementById('vFrame').src = ''; }
+    
+    // 🎉 FULL SCREEN OVERLAY Functions
+    function showInstructionPopup() {
+        const overlay = document.getElementById('popupOverlay');
+        overlay.style.display = 'block';
+        // Prevent scrolling
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeInstructionPopup() {
+        const overlay = document.getElementById('popupOverlay');
+        overlay.style.opacity = '0';
+        overlay.style.transition = 'opacity 0.4s ease';
+        setTimeout(() => {
+            overlay.style.display = 'none';
+            overlay.style.opacity = '1';
+            // Restore scrolling
+            document.body.style.overflow = '';
+        }, 400);
+    }
 
     // ── Render ──
     function render(filter = '') {
@@ -682,7 +865,11 @@
     function closeSplash() {
         const el = document.getElementById('splashScreen');
         el.classList.add('hide');
-        setTimeout(() => { el.style.display = 'none'; }, 900);
+        setTimeout(() => { 
+            el.style.display = 'none';
+            // 🎉 Show FULL SCREEN popup after splash closes
+            showInstructionPopup();
+        }, 900);
     }
 
     window.onload = () => { render(); initConf(); initTypewriter(); };
