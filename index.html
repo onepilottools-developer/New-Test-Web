@@ -2,13 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>OnePilot Hub Pro | Standalone Version</title>
+    <title>OnePilot Hub Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        
+        #onepilot-wrapper * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        
+        #onepilot-wrapper {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            background: #ffffff;
+        }
         
         :root {
             --bg-primary: #ffffff;
@@ -23,494 +31,154 @@
             --accent-light: #7a7aff;
             --accent-glow: rgba(83, 82, 237, 0.15);
         }
+
+        /* SIDEBAR */
+        #onepilot-wrapper .sidebar { width: 240px; background: var(--bg-primary); border-right: 1px solid var(--border-color); padding: 20px 12px; flex-shrink: 0; overflow-y: auto; }
+        #onepilot-wrapper .logo { font-size: 20px; font-weight: 800; color: var(--accent); text-align: center; margin-bottom: 25px; }
+        #onepilot-wrapper .nav-section-label { font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; padding: 8px 12px 4px; margin-top: 6px; }
+        #onepilot-wrapper .nav-item { padding: 10px 12px; border-radius: 10px; color: #64748b; cursor: pointer; margin-bottom: 4px; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 10px; transition: all 0.25s ease; position: relative; overflow: hidden; }
+        #onepilot-wrapper .nav-item::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 3px; background: var(--accent); transform: scaleY(0); transition: transform 0.25s ease; }
+        #onepilot-wrapper .nav-item:hover { background: var(--bg-tertiary); color: var(--accent); transform: translateX(3px); }
+        #onepilot-wrapper .nav-item:hover::before { transform: scaleY(1); }
+        #onepilot-wrapper .nav-item.active { background: linear-gradient(135deg, rgba(83,82,237,0.08), rgba(122,122,255,0.05)); color: var(--accent); border-left: 3px solid var(--accent); }
+        #onepilot-wrapper .nav-item.software-nav:hover, #onepilot-wrapper .nav-item.software-nav.active { color: #f97316; border-left-color: #f97316; background: linear-gradient(135deg, rgba(249,115,22,0.08), rgba(251,146,60,0.05)); }
+        #onepilot-wrapper .nav-item.software-nav::before { background: #f97316; }
+        #onepilot-wrapper .nav-item.bookmark-nav:hover, #onepilot-wrapper .nav-item.bookmark-nav.active { color: #16a34a; border-left-color: #16a34a; background: linear-gradient(135deg, rgba(22,163,74,0.08), rgba(34,197,94,0.05)); }
+        #onepilot-wrapper .nav-item.bookmark-nav::before { background: #16a34a; }
         
-        body { background: var(--bg-primary); display: flex; height: 100vh; overflow: hidden; color: var(--text-primary); }
+        /* Icons styling */
+        #onepilot-wrapper .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+        #onepilot-wrapper .nav-item i { width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
 
-        /* ── SIDEBAR ── */
-        .sidebar { width: 240px; background: var(--bg-primary); border-right: 1px solid var(--border-color); padding: 20px 12px; flex-shrink: 0; overflow-y: auto; }
-        .logo { font-size: 20px; font-weight: 800; color: var(--accent); text-align: center; margin-bottom: 25px; }
+        /* MAIN CONTENT */
+        #onepilot-wrapper .main-content { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; }
         
-        .nav-section-label { font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; padding: 8px 12px 4px; margin-top: 6px; }
+        /* Search */
+        #onepilot-wrapper .search-area { width: 100%; max-width: 500px; position: sticky; top: 15px; z-index: 100; margin-bottom: 25px; flex-shrink: 0; position: relative; }
+        #onepilot-wrapper .search-box { width: 100%; padding: 12px 20px 12px 50px; border-radius: 40px; border: 1px solid #e2e8f0; outline: none; font-size: 14px; box-shadow: var(--shadow-soft); transition: all 0.25s ease; background: var(--bg-primary); }
+        #onepilot-wrapper .search-box:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow), var(--shadow-hover); transform: translateY(-2px); }
+        #onepilot-wrapper .search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--accent); width: 20px; height: 20px; }
+        #onepilot-wrapper .search-icon svg { width: 20px; height: 20px; }
 
-        .nav-item { padding: 10px 12px; border-radius: 10px; color: #64748b; cursor: pointer; margin-bottom: 4px; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 10px; transition: all 0.25s ease; position: relative; overflow: hidden; }
-        .nav-item::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 3px; background: var(--accent); transform: scaleY(0); transition: transform 0.25s ease; }
-        .nav-item:hover { background: var(--bg-tertiary); color: var(--accent); transform: translateX(3px); }
-        .nav-item:hover::before { transform: scaleY(1); }
-        .nav-item.active { background: linear-gradient(135deg, rgba(83,82,237,0.08), rgba(122,122,255,0.05)); color: var(--accent); border-left: 3px solid var(--accent); }
-        
-        .nav-item.software-nav:hover, .nav-item.software-nav.active { color: #f97316; border-left-color: #f97316; background: linear-gradient(135deg, rgba(249,115,22,0.08), rgba(251,146,60,0.05)); }
-        .nav-item.software-nav::before { background: #f97316; }
-        .nav-item.bookmark-nav:hover, .nav-item.bookmark-nav.active { color: #16a34a; border-left-color: #16a34a; background: linear-gradient(135deg, rgba(22,163,74,0.08), rgba(34,197,94,0.05)); }
-        .nav-item.bookmark-nav::before { background: #16a34a; }
+        /* Grid & Cards */
+        #onepilot-wrapper .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; width: 100%; max-width: 1200px; }
+        #onepilot-wrapper .card { background: var(--bg-primary); width: 100%; height: 280px; border-radius: 14px; transition: all 0.3s cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow-soft); cursor: pointer; border: 1px solid var(--border-color); position: relative; }
+        #onepilot-wrapper .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-light)); opacity: 0; transition: opacity 0.3s ease; }
+        #onepilot-wrapper .card:hover { transform: translateY(-6px) scale(1.015); box-shadow: var(--shadow-hover); border-color: var(--accent); z-index: 5; }
+        #onepilot-wrapper .card:hover::before { opacity: 1; }
+        #onepilot-wrapper .card.software-card::before { background: linear-gradient(90deg, #f97316, #fb923c); }
+        #onepilot-wrapper .card.software-card:hover { border-color: #f97316; }
+        #onepilot-wrapper .card.software-card:hover .text-box h3 { color: #f97316; }
+        #onepilot-wrapper .card.bookmark-card::before { background: linear-gradient(90deg, #16a34a, #22c55e); }
+        #onepilot-wrapper .card.bookmark-card:hover { border-color: #16a34a; }
+        #onepilot-wrapper .card.bookmark-card:hover .text-box h3 { color: #16a34a; }
+        #onepilot-wrapper .img-box { height: 150px; background: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; padding: 15px; position: relative; overflow: hidden; }
+        #onepilot-wrapper .img-box::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, var(--accent-glow) 0%, transparent 70%); opacity: 0; transition: opacity 0.3s ease; }
+        #onepilot-wrapper .card:hover .img-box::after { opacity: 1; }
+        #onepilot-wrapper .img-box img { max-width: 100%; max-height: 100%; transition: transform 0.3s ease; }
+        #onepilot-wrapper .card:hover img { transform: scale(1.08); }
+        #onepilot-wrapper .text-box { padding: 12px 10px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+        #onepilot-wrapper .text-box h3 { font-size: 13px; font-weight: 700; color: var(--text-primary); transition: color 0.25s ease; line-height: 1.3; }
+        #onepilot-wrapper .card:hover .text-box h3 { color: var(--accent); }
+        #onepilot-wrapper .card-btn { background: linear-gradient(45deg,var(--accent),var(--accent-light)); color: white; text-align: center; padding: 10px 0; font-size: 12px; font-weight: 600; transition: all 0.25s ease; position: relative; overflow: hidden; }
+        #onepilot-wrapper .card-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); transition: left 0.4s ease; }
+        #onepilot-wrapper .card:hover .card-btn::before { left: 100%; }
+        #onepilot-wrapper .card:hover .card-btn { box-shadow: 0 6px 20px rgba(83,82,237,0.3); }
 
-        /* ── MAIN CONTENT ── */
-        .main-content { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; }
-        
-        /* Search - Compact */
-        .search-area { width: 100%; max-width: 500px; position: sticky; top: 15px; z-index: 100; margin-bottom: 25px; flex-shrink: 0; }
-        .search-box { width: 100%; padding: 12px 50px; border-radius: 40px; border: 1px solid #e2e8f0; outline: none; font-size: 14px; box-shadow: var(--shadow-soft); transition: all 0.25s ease; background: var(--bg-primary); }
-        .search-box:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow), var(--shadow-hover); transform: translateY(-2px); }
-        .search-area i { position: absolute; left: 18px; top: 15px; color: var(--accent); font-size: 18px; }
-
-        /* Grid & Cards - COMPACT & RESPONSIVE */
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-            gap: 18px; 
-            width: 100%; 
-            max-width: 1200px;
-        }
-        .card { 
-            background: var(--bg-primary); 
-            width: 100%; 
-            height: 280px;
-            border-radius: 14px; 
-            transition: all 0.3s cubic-bezier(0.4,0,0.2,1); 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden; 
-            box-shadow: var(--shadow-soft); 
-            cursor: pointer; 
-            border: 1px solid var(--border-color); 
-            position: relative; 
-        }
-        .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-light)); opacity: 0; transition: opacity 0.3s ease; }
-        .card:hover { transform: translateY(-6px) scale(1.015); box-shadow: var(--shadow-hover); border-color: var(--accent); z-index: 5; }
-        .card:hover::before { opacity: 1; }
-
-        /* Software & Bookmark cards - colored top bar only (button same blue) */
-        .card.software-card::before { background: linear-gradient(90deg, #f97316, #fb923c); }
-        .card.software-card:hover { border-color: #f97316; }
-        .card.software-card:hover .text-box h3 { color: #f97316; }
-
-        .card.bookmark-card::before { background: linear-gradient(90deg, #16a34a, #22c55e); }
-        .card.bookmark-card:hover { border-color: #16a34a; }
-        .card.bookmark-card:hover .text-box h3 { color: #16a34a; }
-
-        .img-box { 
-            height: 150px;
-            background: var(--bg-tertiary); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 15px; 
-            position: relative; 
-            overflow: hidden; 
-        }
-        .img-box::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, var(--accent-glow) 0%, transparent 70%); opacity: 0; transition: opacity 0.3s ease; }
-        .card:hover .img-box::after { opacity: 1; }
-        .img-box img { max-width: 100%; max-height: 100%; transition: transform 0.3s ease; }
-        .card:hover img { transform: scale(1.08); }
-        
-        .text-box { 
-            padding: 12px 10px; 
-            text-align: center; 
-            flex-grow: 1; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-        }
-        .text-box h3 { 
-            font-size: 13px; 
-            font-weight: 700; 
-            color: var(--text-primary); 
-            transition: color 0.25s ease; 
-            line-height: 1.3;
-        }
-        .card:hover .text-box h3 { color: var(--accent); }
-        
-        /* ✅ ALL CARDS - SAME BLUE BUTTON */
-        .card-btn { 
-            background: linear-gradient(45deg,var(--accent),var(--accent-light)); 
-            color: white; 
-            text-align: center; 
-            padding: 10px 0; 
-            font-size: 12px; 
-            font-weight: 600; 
-            transition: all 0.25s ease; 
-            position: relative; 
-            overflow: hidden; 
-        }
-        .card-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); transition: left 0.4s ease; }
-        .card:hover .card-btn::before { left: 100%; }
-        .card:hover .card-btn { box-shadow: 0 6px 20px rgba(83,82,237,0.3); }
+        /* Splash Screen */
+        #onepilot-wrapper #splashScreen { position: fixed; inset: 0; z-index: 2147483647; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e8ba3 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        #onepilot-wrapper #splashScreen.hide { opacity: 0; transform: scale(1.1); pointer-events: none; }
+        #onepilot-wrapper .splash-bg { position: absolute; inset: 0; overflow: hidden; }
+        #onepilot-wrapper .splash-orb { position: absolute; border-radius: 50%; filter: blur(80px); animation: float 20s ease-in-out infinite; opacity: 0.3; }
+        #onepilot-wrapper .splash-orb:nth-child(1) { width: 600px; height: 600px; background: rgba(255, 255, 255, 0.1); top: -200px; left: -200px; animation-delay: 0s; }
+        #onepilot-wrapper .splash-orb:nth-child(2) { width: 400px; height: 400px; background: rgba(255, 255, 255, 0.08); bottom: -100px; right: -100px; animation-delay: -5s; }
+        @keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(30px, -30px) scale(1.1); } 66% { transform: translate(-20px, 20px) scale(0.9); } }
+        #onepilot-wrapper .stars { position: absolute; inset: 0; background-image: radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.8), transparent), radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.6), transparent), radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.9), transparent), radial-gradient(2px 2px at 160px 120px, rgba(255,255,255,0.7), transparent); background-repeat: repeat; background-size: 250px 200px; animation: twinkle 5s ease-in-out infinite; opacity: 0.6; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.6; } 50% { opacity: 0.3; } }
+        #onepilot-wrapper .splash-container { position: relative; z-index: 10; text-align: center; max-width: 1000px; width: 95%; padding: 20px; animation: fadeInUp 1s ease-out; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        #onepilot-wrapper .rocket-image-container { position: relative; width: 100%; max-width: 800px; margin: 0 auto 40px; animation: rocketFloat 3s ease-in-out infinite; }
+        @keyframes rocketFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        #onepilot-wrapper .rocket-image { width: 100%; height: auto; max-height: 450px; object-fit: contain; filter: drop-shadow(0 20px 60px rgba(0,0,0,0.4)); }
+        #onepilot-wrapper .splash-buttons { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+        #onepilot-wrapper .btn-whatsapp { background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); color: white; padding: 16px 35px; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4); transition: all 0.3s ease; }
+        #onepilot-wrapper .btn-whatsapp:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 15px 40px rgba(37, 211, 102, 0.5); }
+        #onepilot-wrapper .btn-explore { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px 35px; border-radius: 50px; border: none; font-weight: 700; font-size: 15px; cursor: pointer; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4); transition: all 0.3s ease; }
+        #onepilot-wrapper .btn-explore:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5); }
+        #onepilot-wrapper .btn-explore i { transition: transform 0.3s ease; }
+        #onepilot-wrapper .btn-explore:hover i { transform: translateX(5px); }
+        #onepilot-wrapper .splash-footer { margin-top: 25px; color: rgba(255,255,255,0.8); font-size: 13px; font-weight: 500; }
+        #onepilot-wrapper .splash-footer a { color: white; text-decoration: none; font-weight: 700; }
+        #onepilot-wrapper .splash-footer a:hover { text-decoration: underline; }
+        #onepilot-wrapper .confetti { position: absolute; width: 10px; height: 10px; background: #fff; animation: confetti-fall 3s linear infinite; opacity: 0; }
+        @keyframes confetti-fall { 0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
 
         /* Modals */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.92); z-index: 1000000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
-        .modal-box { background: var(--bg-primary); padding: 35px; border-radius: 24px; width: 420px; box-shadow: var(--shadow-hover); text-align: center; animation: slideUp 0.3s ease-out; border: 1px solid var(--border-color); }
+        #onepilot-wrapper .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.92); z-index: 1000000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        #onepilot-wrapper .modal-box { background: var(--bg-primary); padding: 35px; border-radius: 24px; width: 420px; box-shadow: var(--shadow-hover); text-align: center; animation: slideUp 0.3s ease-out; border: 1px solid var(--border-color); }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .modal-box i.main-icon { font-size: 48px; color: var(--accent); margin-bottom: 15px; background: rgba(83,82,237,0.08); padding: 20px; border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+        #onepilot-wrapper .modal-box i.main-icon { font-size: 48px; color: var(--accent); margin-bottom: 15px; background: rgba(83,82,237,0.08); padding: 20px; border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
         @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 var(--accent-glow); } 50% { box-shadow: 0 0 0 12px rgba(83,82,237,0); } }
-        .modal-box h2 { font-size: 20px; color: var(--text-primary); margin-bottom: 8px; font-weight: 700; }
-        .modal-box p { color: var(--text-secondary); margin-bottom: 20px; font-size: 13px; word-wrap: break-word; }
-        .modal-box input { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid rgba(83,82,237,0.15); margin-bottom: 15px; outline: none; font-family: 'Poppins', sans-serif; transition: all 0.25s ease; background: var(--bg-secondary); }
-        .modal-box input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow); }
-        .action-btn { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--accent); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.25s ease; }
-        .action-btn:hover { background: #3e3dbb; transform: scale(1.02); box-shadow: 0 8px 25px rgba(83,82,237,0.3); }
-        .close-link { display: block; margin-top: 12px; color: #94a3b8; cursor: pointer; font-size: 13px; transition: color 0.2s ease; }
-        .close-link:hover { color: var(--accent); }
-
-        /* 🎉 FULL SCREEN OVERLAY POPUP */
-        #popupOverlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            z-index: 9999999;
-            overflow: hidden;
-        }
-        
-        #instructionPopup {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.8);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-            padding: 50px 40px;
-            border-radius: 32px;
-            box-shadow: 0 40px 120px rgba(0, 0, 0, 0.5), 
-                        0 0 0 1px rgba(255,255,255,0.2) inset;
-            text-align: center;
-            max-width: 580px;
-            width: 90%;
-            animation: popupEnter 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        #instructionPopup::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: rotateBg 20s linear infinite;
-            pointer-events: none;
-        }
-        
-        @keyframes rotateBg {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        #instructionPopup:hover {
-            transform: translate(-50%, -50%) scale(1.02);
-            box-shadow: 0 50px 140px rgba(0, 0, 0, 0.6),
-                        0 0 0 1px rgba(255,255,255,0.3) inset;
-        }
-        
-        @keyframes popupEnter {
-            to {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 1;
-            }
-        }
-        
-        .popup-content {
-            position: relative;
-            z-index: 2;
-        }
-        
-        .popup-icon-wrapper {
-            width: 90px;
-            height: 90px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 25px;
-            backdrop-filter: blur(10px);
-            border: 3px solid rgba(255,255,255,0.3);
-            animation: iconPulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes iconPulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
-            50% { transform: scale(1.08); box-shadow: 0 0 0 25px rgba(255,255,255,0); }
-        }
-        
-        .popup-icon {
-            font-size: 42px;
-            color: #fff;
-            text-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        
-        .popup-title {
-            font-size: 28px;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 30px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.15);
-            letter-spacing: -0.5px;
-        }
-        
-        .popup-message-card {
-            background: rgba(255,255,255,0.98);
-            border-radius: 20px;
-            padding: 30px 35px;
-            margin-bottom: 30px;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.5);
-        }
-        
-        .popup-message {
-            font-size: 16px;
-            color: #1a1a1a;
-            line-height: 2;
-            font-weight: 600;
-        }
-        
-        .highlight-box {
-            display: inline-flex;
-            align-items: center;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: #fff;
-            padding: 8px 20px;
-            border-radius: 12px;
-            font-weight: 700;
-            margin: 0 6px;
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-            font-size: 17px;
-        }
-        
-        .text-divider {
-            display: block;
-            margin: 15px 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
-        }
-        
-        .popup-close {
-            background: rgba(255,255,255,0.98);
-            color: #667eea;
-            border: none;
-            padding: 16px 45px;
-            border-radius: 16px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .popup-close:hover {
-            background: #fff;
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-        }
-        
-        .popup-close:active {
-            transform: translateY(-1px);
-        }
-        
-        .popup-close i {
-            font-size: 18px;
-        }
-
-        /* Loading */
-        #loadingOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 9999999; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .pure-css-loader { width: 70px; height: 70px; border: 7px solid #f3f3f3; border-top: 7px solid var(--accent); border-radius: 50%; animation: spin 1.2s linear infinite; box-shadow: 0 0 20px var(--accent-glow); }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #onepilot-wrapper .modal-box h2 { font-size: 20px; color: var(--text-primary); margin-bottom: 8px; font-weight: 700; }
+        #onepilot-wrapper .modal-box p { color: var(--text-secondary); margin-bottom: 20px; font-size: 13px; word-wrap: break-word; }
+        #onepilot-wrapper .modal-box input { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid rgba(83,82,237,0.15); margin-bottom: 15px; outline: none; font-family: 'Poppins', sans-serif; transition: all 0.25s ease; background: var(--bg-secondary); }
+        #onepilot-wrapper .modal-box input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow); }
+        #onepilot-wrapper .action-btn { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--accent); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.25s ease; }
+        #onepilot-wrapper .action-btn:hover { background: #3e3dbb; transform: scale(1.02); box-shadow: 0 8px 25px rgba(83,82,237,0.3); }
+        #onepilot-wrapper .close-link { display: block; margin-top: 12px; color: #94a3b8; cursor: pointer; font-size: 13px; transition: color 0.2s ease; }
+        #onepilot-wrapper .close-link:hover { color: var(--accent); }
 
         /* iFrame Viewer */
-        #viewer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-primary); z-index: 10000; padding: 15px; }
-        #viewer iframe { width: 100%; height: calc(100% - 50px); border: none; border-radius: 16px; background: var(--bg-primary); box-shadow: var(--shadow-hover); }
-        .back-btn { padding: 8px 16px; background: var(--accent); color: white; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 10px; font-weight: 700; transition: all 0.25s ease; font-size: 14px; }
-        .back-btn:hover { background: #3e3dbb; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(83,82,237,0.3); }
+        #onepilot-wrapper #viewer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-primary); z-index: 10000; padding: 15px; }
+        #onepilot-wrapper #viewer iframe { width: 100%; height: calc(100% - 50px); border: none; border-radius: 16px; background: var(--bg-primary); box-shadow: var(--shadow-hover); }
+        #onepilot-wrapper .back-btn { padding: 8px 16px; background: var(--accent); color: white; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 10px; font-weight: 700; transition: all 0.25s ease; font-size: 14px; }
+        #onepilot-wrapper .back-btn:hover { background: #3e3dbb; transform: translateY(-2px); box-shadow: 0 6px 16px rgba(83,82,237,0.3); }
 
-        /* Splash Screen - Compact */
-        #splashScreen {
-            position: fixed; inset: 0; z-index: 2147483647; overflow: hidden;
-            background: var(--bg-primary);
-            display: flex; align-items: center; justify-content: center;
-            transition: opacity 1s cubic-bezier(.77,0,.18,1), transform 1s cubic-bezier(.77,0,.18,1);
+        /* Loading */
+        #onepilot-wrapper #loadingOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 9999999; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        #onepilot-wrapper .pure-css-loader { width: 70px; height: 70px; border: 7px solid #f3f3f3; border-top: 7px solid var(--accent); border-radius: 50%; animation: spin 1.2s linear infinite; box-shadow: 0 0 20px var(--accent-glow); }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #onepilot-wrapper .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); }
+            #onepilot-wrapper { flex-direction: column; height: auto; min-height: 100vh; }
+            #onepilot-wrapper .main-content { height: auto; }
+            #onepilot-wrapper .grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+            #onepilot-wrapper .splash-buttons { flex-direction: column; align-items: center; }
+            #onepilot-wrapper .btn-whatsapp, #onepilot-wrapper .btn-explore { width: 100%; max-width: 300px; justify-content: center; }
+            #onepilot-wrapper .rocket-image { max-height: 300px; }
         }
-        #splashScreen.hide { opacity: 0; transform: scale(1.07); pointer-events: none; }
-
-        .sp-orb { position: absolute; border-radius: 50%; filter: blur(90px); pointer-events: none; animation: orbDrift ease-in-out infinite alternate; opacity: 0.5; }
-        @keyframes orbDrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(var(--dx),var(--dy)) scale(var(--ds)); } }
-
-        .sp-grid { position: absolute; inset: 0; pointer-events: none;
-            background-image: radial-gradient(circle, rgba(83,82,237,0.12) 1px, transparent 1px);
-            background-size: 36px 36px;
-            mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, #000 20%, transparent 100%);
-            animation: gridPulse 4s ease-in-out infinite; }
-        @keyframes gridPulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
-
-        .sp-conf { position: absolute; opacity: 0; pointer-events: none; animation: confRise linear infinite; }
-        @keyframes confRise {
-            0% { transform: translateY(108vh) rotate(0deg) scale(.5); opacity: 0; }
-            7% { opacity: .65; } 93% { opacity: .35; }
-            100% { transform: translateY(-12vh) rotate(600deg) scale(1.1); opacity: 0; }
-        }
-
-        .sp-card {
-            position: relative; z-index: 20; width: 480px;
-            background: var(--bg-primary); border-radius: 28px; overflow: hidden;
-            box-shadow: 0 0 0 1px rgba(83,82,237,.08), 0 30px 60px rgba(0,0,0,.12);
-            animation: cardIn 1.1s cubic-bezier(.34,1.4,.64,1) both;
-            border: 1px solid var(--border-color);
-        }
-        @keyframes cardIn {
-            from { transform: translateY(90px) scale(.78) rotateX(10deg); opacity: 0; filter: blur(8px); }
-            to { transform: none; opacity: 1; filter: none; }
-        }
-
-        .sp-bar { height: 4px; background: linear-gradient(90deg,var(--accent),#a855f7,#ec4899,#f59e0b,#22c55e,#06b6d4,var(--accent)); background-size: 400% 100%; animation: barSlide 3s linear infinite; }
-        @keyframes barSlide { 0% { background-position: 0%; } 100% { background-position: 400%; } }
-
-        .sp-hero { background: linear-gradient(155deg, var(--bg-secondary) 0%, var(--bg-tertiary) 45%, var(--bg-secondary) 100%); padding: 28px 32px 20px; text-align: center; position: relative; overflow: hidden; }
-        .sp-hero-glow { position: absolute; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle, rgba(83,82,237,.12) 0%, transparent 70%); top: 50%; left: 50%; transform: translate(-50%,-50%); animation: glowPulse 4s ease-in-out infinite; }
-        @keyframes glowPulse { 0%,100% { transform: translate(-50%,-50%) scale(1); } 50% { transform: translate(-50%,-50%) scale(1.35); } }
-
-        .sp-logo { width: 92px; height: 92px; border-radius: 50%;
-            background: linear-gradient(145deg,#818cf8,var(--accent),#4f46e5);
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 14px; position: relative; z-index: 2;
-            box-shadow: 0 0 0 10px rgba(83,82,237,.1), 0 0 0 20px rgba(83,82,237,.05), 0 16px 40px rgba(83,82,237,.4);
-            animation: logoFloat 3s ease-in-out infinite, cardIn 1.1s cubic-bezier(.34,1.4,.64,1) .08s both;
-            cursor: pointer; transition: transform .4s cubic-bezier(.34,1.6,.64,1), box-shadow .4s; }
-        .sp-logo:hover { transform: scale(1.16) rotate(-10deg) !important; box-shadow: 0 0 0 14px rgba(83,82,237,.14), 0 0 0 28px rgba(83,82,237,.07), 0 24px 50px rgba(83,82,237,.55); }
-        @keyframes logoFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-        .sp-logo::before { content: ''; position: absolute; inset: -6px; border-radius: 50%; background: conic-gradient(from 0deg,var(--accent),#a855f7,#ec4899,#f59e0b,#22c55e,#06b6d4,var(--accent)); animation: haloSpin 3s linear infinite; z-index: -1; opacity: 0.6; }
-        .sp-logo::after { content: ''; position: absolute; inset: 6px; border-radius: 50%; background: linear-gradient(145deg,#818cf8,#4f46e5); }
-        @keyframes haloSpin { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
-        .sp-logo i { font-size: 38px; color: #fff; position: relative; z-index: 2; filter: drop-shadow(0 4px 12px rgba(0,0,0,.25)); animation: iconBeat 2.6s ease-in-out infinite; }
-        @keyframes iconBeat { 0%,100% { transform: scale(1) rotate(0); } 50% { transform: scale(1.14) rotate(-6deg); } }
-
-        .sp-hero-title { font-family: 'DM Sans', sans-serif; font-size: 26px; font-weight: 700; color: var(--text-primary); letter-spacing: -1px; line-height: 1.15; margin-bottom: 4px; position: relative; z-index: 2; animation: cardIn 1.1s cubic-bezier(.34,1.4,.64,1) .14s both; }
-        .sp-hero-title em { font-style: normal; background: linear-gradient(90deg,var(--accent),#a855f7,#ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .sp-hero-sub { font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 500; color: #a5b4fc; letter-spacing: 2.5px; text-transform: uppercase; position: relative; z-index: 2; animation: cardIn 1.1s cubic-bezier(.34,1.4,.64,1) .18s both; }
-
-        .sp-body { padding: 18px 32px 24px; background: var(--bg-primary); }
-
-        .sp-badge { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg,#f0fdf4,#dcfce7); border: 1.5px solid #86efac; color: #15803d; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 700; padding: 4px 11px; border-radius: 100px; margin-bottom: 10px; box-shadow: 0 2px 10px rgba(34,197,94,.16); animation: cardIn 1.1s cubic-bezier(.34,1.4,.64,1) .22s both; }
-        .sp-dot { width: 7px; height: 7px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 0 3px rgba(34,197,94,.25); animation: dotBeat 1.2s ease-in-out infinite; }
-        @keyframes dotBeat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.6); } }
-
-        .sp-type { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400; color: var(--text-secondary); min-height: 20px; margin-bottom: 14px; animation: cardIn 1.1s cubic-bezier(.34,1.4,.64,1) .26s both; }
-        .sp-cur { display: inline-block; width: 2px; height: 14px; background: var(--accent); vertical-align: middle; margin-left: 2px; animation: curBlink .7s step-end infinite; }
-        @keyframes curBlink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
-
-        .sp-pills { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 15px; animation: cardIn 1.1s cubic-bezier(.34,1.4,.64,1) .3s both; }
-        .sp-pill { display: flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 700; border: 1.5px solid; cursor: default; transition: transform .3s cubic-bezier(.34,1.6,.64,1), box-shadow .3s; background: var(--bg-primary); }
-        .sp-pill:hover { transform: translateY(-3px) scale(1.05); }
-        .pp1 { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
-        .pp2 { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
-        .pp3 { background: #faf5ff; color: #7c3aed; border-color: #ddd6fe; }
-        .pp4 { background: #f0fdf4; color: #16a34a; border-color: #bbf7d0; }
-        .pp5 { background: #fff7ed; color: #c2410c; border-color: #fed7aa; }
-
-        .sp-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 15px; animation: cardIn 1.1s cubic-bezier(.34,1.4,.64,1) .34s both; }
-        .sp-stat { background: var(--bg-secondary); border: 1.5px solid var(--border-color); border-radius: 14px; padding: 10px 4px; text-align: center; transition: transform .3s cubic-bezier(.34,1.6,.64,1), box-shadow .3s, border-color .3s; cursor: default; }
-        .sp-stat:hover { transform: translateY(-4px) scale(1.04); box-shadow: var(--shadow-hover); border-color: var(--accent); }
-        .sp-num { font-family: 'DM Sans', sans-serif; font-size: 17px; font-weight: 700; color: var(--accent); }
-        .sp-lbl { font-family: 'DM Sans', sans-serif; font-size: 8px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; font-weight: 500; margin-top: 2px; }
-
-        .sp-wa { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 11px; border-radius: 12px; border: none; background: linear-gradient(135deg,#22c55e,#16a34a); color: #fff; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; text-decoration: none; box-shadow: 0 4px 16px rgba(34,197,94,.28); transition: transform .3s cubic-bezier(.34,1.6,.64,1), box-shadow .3s; margin-bottom: 8px; position: relative; overflow: hidden; animation: cardIn 1.1s cubic-bezier(.34,1.4,.64,1) .38s both; }
-        .sp-wa::before { content: ''; position: absolute; top: 0; left: -80%; width: 55%; height: 100%; background: linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent); transform: skewX(-15deg); animation: btnShine 2.8s ease-in-out infinite; }
-        @keyframes btnShine { 0%,100% { left: -80%; } 50% { left: 130%; } }
-        .sp-wa:hover { transform: translateY(-2px) scale(1.01); box-shadow: 0 10px 26px rgba(34,197,94,.4); }
-        .sp-wa i, .sp-wa span, .sp-enter span, .sp-enter i { position: relative; z-index: 1; }
-
-        .sp-enter { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 13px; border-radius: 12px; border: none; background: linear-gradient(135deg,var(--accent),#4f46e5); color: #fff; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 20px rgba(79,70,229,.36); transition: transform .3s cubic-bezier(.34,1.6,.64,1), box-shadow .3s; animation: cardIn 1.1s cubic-bezier(.34,1.4,.64,1) .42s both, enterPulse 3.5s ease-in-out infinite; position: relative; overflow: hidden; }
-        .sp-enter::before { content: ''; position: absolute; top: 0; left: -80%; width: 55%; height: 100%; background: linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent); transform: skewX(-15deg); animation: btnShine 2.8s ease-in-out infinite; animation-delay: .5s; }
-        @keyframes enterPulse { 0%,100% { box-shadow: 0 6px 20px rgba(79,70,229,.36); } 50% { box-shadow: 0 6px 34px rgba(124,58,237,.6); } }
-        .sp-enter:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 12px 32px rgba(79,70,229,.56); }
-        .sp-enter:active { transform: scale(.98); }
-        .sp-arr { transition: transform .3s cubic-bezier(.34,1.6,.64,1); }
-        .sp-enter:hover .sp-arr { transform: translateX(5px); }
-
-        .sp-foot { text-align: center; margin-top: 10px; font-family: 'DM Sans', sans-serif; font-size: 10px; color: #9ca3af; animation: cardIn 1.1s cubic-bezier(.34,1.4,.64,1) .46s both; }
-        .sp-foot a { color: var(--accent); text-decoration: none; font-weight: 600; }
-        .sp-foot a:hover { text-decoration: underline; color: #3e3dbb; }
     </style>
 </head>
-<body>
+<body style="margin:0;padding:0;">
 
-<!-- ✨ WHITE SPLASH SCREEN ✨ -->
+<div id="onepilot-wrapper">
+
+<!-- Splash Screen -->
 <div id="splashScreen">
-    <div class="sp-orb" style="width:700px;height:500px;background:rgba(83,82,237,.06);top:-200px;left:-200px;--dx:40px;--dy:30px;--ds:1.1;animation-duration:16s;"></div>
-    <div class="sp-orb" style="width:600px;height:600px;background:rgba(168,85,247,.05);bottom:-200px;right:-160px;--dx:-30px;--dy:-20px;--ds:1.12;animation-duration:20s;animation-delay:-8s;"></div>
-    <div class="sp-orb" style="width:340px;height:340px;background:rgba(34,197,94,.05);top:28%;left:68%;--dx:20px;--dy:25px;--ds:1.08;animation-duration:14s;animation-delay:-5s;"></div>
-    <div class="sp-orb" style="width:250px;height:250px;background:rgba(245,158,11,.05);bottom:10%;left:7%;--dx:-25px;--dy:15px;--ds:1.1;animation-duration:18s;animation-delay:-11s;"></div>
-    <div class="sp-grid"></div>
-    <div id="sp-conf-wrap"></div>
-
-    <div class="sp-card">
-        <div class="sp-bar"></div>
-        <div class="sp-hero">
-            <div class="sp-hero-glow"></div>
-            <div class="sp-logo"><i class="fa-solid fa-rocket"></i></div>
-            <div class="sp-hero-title"><em>OnePilot</em> Tools</div>
-            <div class="sp-hero-sub">onepilottools.com</div>
-        </div>
-        <div class="sp-body">
-            <div class="sp-badge"><div class="sp-dot"></div> Pakistan Ka #1 Free Toolkit</div>
-            <div class="sp-type" id="spType"><span class="sp-cur"></span></div>
-            <div class="sp-pills">
-                <div class="sp-pill pp1"><i class="fa-solid fa-file-pdf"></i> PDF</div>
-                <div class="sp-pill pp2"><i class="fa-solid fa-image"></i> Image</div>
-                <div class="sp-pill pp3"><i class="fa-solid fa-robot"></i> AI Writing</div>
-                <div class="sp-pill pp4"><i class="fa-brands fa-whatsapp"></i> WhatsApp</div>
-                <div class="sp-pill pp5"><i class="fa-solid fa-wrench"></i> Utility</div>
-            </div>
-            <div class="sp-stats">
-                <div class="sp-stat"><div class="sp-num">50+</div><div class="sp-lbl">Tools</div></div>
-                <div class="sp-stat"><div class="sp-num">FREE</div><div class="sp-lbl">Forever</div></div>
-                <div class="sp-stat"><div class="sp-num">0</div><div class="sp-lbl">Signup</div></div>
-                <div class="sp-stat"><div class="sp-num">24/7</div><div class="sp-lbl">Online</div></div>
-            </div>
-            <a class="sp-wa" href="https://wa.me/923005682345" target="_blank">
-                <i class="fa-brands fa-whatsapp"></i>
-                <span>WhatsApp Support - 0300-5682345</span>
-            </a>
-            <button class="sp-enter" onclick="closeSplash()">
-                <i class="fa-solid fa-rocket"></i>
-                <span>Explore Karna Shuru Karein!</span>
-                <i class="fa-solid fa-arrow-right sp-arr"></i>
-            </button>
-            <div class="sp-foot">Made with &#10084; &bull; <a href="https://onepilottools.com" target="_blank">onepilottools.com</a></div>
-        </div>
+    <div class="splash-bg">
+        <div class="splash-orb"></div>
+        <div class="splash-orb"></div>
+        <div class="stars"></div>
     </div>
-</div>
-
-<!-- 🎉 FULL SCREEN OVERLAY -->
-<div id="popupOverlay">
-    <!-- 🎉 ENHANCED: Animated Instruction Popup -->
-    <div id="instructionPopup">
-        <div class="popup-content">
-            <div class="popup-icon-wrapper">
-                <i class="fa-solid fa-bell popup-icon"></i>
-            </div>
-            <div class="popup-title">⚠️ Important Note</div>
-            
-            <div class="popup-message-card">
-                <div class="popup-message">
-                    Bahi sirf <span class="highlight-box">(1) bar</span><br>
-                    Convert/Download button pay click kry<br>
-                    <span class="text-divider"></span>
-                    or apni file <span class="highlight-box">Download Folder</span> may daikhe
-                </div>
-            </div>
-            
-            <button class="popup-close" onclick="closeInstructionPopup()">
-                <i class="fa-solid fa-check-circle"></i>
-                Got it, Thanks!
+    <div id="confetti-container"></div>
+    <div class="splash-container">
+        <div class="rocket-image-container">
+            <img src="https://i.pinimg.com/originals/05/5b/ef/055befb033cfc6d7e73e348cd4a98838.png" alt="OnePilot Tools Rocket" class="rocket-image" id="rocketImg">
+        </div>
+        <div class="splash-buttons">
+            <a href="https://wa.me/923005682345" target="_blank" class="btn-whatsapp">
+                <i class="fa-brands fa-whatsapp"></i>
+                WhatsApp Support - 0300-5682345
+            </a>
+            <button onclick="closeSplash()" class="btn-explore">
+                Explore Karna Shuru Karein!
+                <i class="fa-solid fa-arrow-right"></i>
             </button>
+        </div>
+        <div class="splash-footer">
+            Made with ❤️ • <a href="https://onepilottools.com" target="_blank">onepilottools.com</a>
         </div>
     </div>
 </div>
@@ -549,27 +217,56 @@
     <div class="logo">OnePilot Hub</div>
     
     <div class="nav-section-label">Main Tools</div>
-    <div class="nav-item active" onclick="setTab('popular', this)"><i class="fa-solid fa-star"></i> Popular Tools</div>
-    <div class="nav-item" onclick="setTab('pdf', this)"><i class="fa-solid fa-file-pdf"></i> PDF Tools</div>
-    <div class="nav-item" onclick="setTab('image', this)"><i class="fa-solid fa-image"></i> Image Tools</div>
-    <div class="nav-item" onclick="setTab('utility', this)"><i class="fa-solid fa-wrench"></i> Utility Tools</div>
-    <div class="nav-item" onclick="setTab('ai', this)"><i class="fa-solid fa-robot"></i> AI Writing</div>
-    <div class="nav-item" onclick="setTab('social', this)"><i class="fa-brands fa-whatsapp"></i> WhatsApp</div>
+    <div class="nav-item active" onclick="setTab('popular', this)">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
+        Popular Tools
+    </div>
+    <div class="nav-item" onclick="setTab('pdf', this)">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+        PDF Tools
+    </div>
+    <div class="nav-item" onclick="setTab('image', this)">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+        Image Tools
+    </div>
+    <div class="nav-item" onclick="setTab('utility', this)">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+        Utility Tools
+    </div>
+    <div class="nav-item" onclick="setTab('ai', this)">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+        AI Writing
+    </div>
+    <div class="nav-item" onclick="setTab('social', this)">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        WhatsApp
+    </div>
     
     <div class="nav-section-label">More</div>
-    <div class="nav-item software-nav" onclick="setTab('software', this)"><i class="fa-solid fa-box-open"></i> Software</div>
-    <div class="nav-item bookmark-nav" onclick="setTab('bookmarks', this)"><i class="fa-solid fa-bookmark"></i> One Pilot Bookmarks</div>
+    <div class="nav-item software-nav" onclick="setTab('software', this)">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+        Software
+    </div>
+    <div class="nav-item bookmark-nav" onclick="setTab('bookmarks', this)">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
+        One Pilot Bookmarks
+    </div>
     
     <div class="nav-section-label">Info</div>
-    <div class="nav-item" onclick="setTab('about', this)"><i class="fa-solid fa-info-circle"></i> About Us</div>
+    <div class="nav-item" onclick="setTab('about', this)">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        About Us
+    </div>
 </div>
 
 <!-- MAIN CONTENT -->
 <div class="main-content">
-    <!-- Green banner removed as requested -->
-    
     <div class="search-area" id="searchArea">
-        <i class="fa-solid fa-magnifying-glass"></i>
+        <div class="search-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+        </div>
         <input type="text" id="searchInp" class="search-box" placeholder="Universal Search..." onkeyup="handleSearch(event)">
     </div>
     
@@ -583,136 +280,136 @@
     <iframe id="vFrame" src=""></iframe>
 </div>
 
+</div>
+
 <script>
     // ── Windows Settings ──
     const windowsSettings = [
-        { name: 'Control Panel',       cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/11370/11370128.png', link: 'control' },
-        { name: 'Mouse Settings',      cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/653/653271.png',     link: 'main.cpl' },
-        { name: 'Uninstall Apps',      cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/6266/6266514.png',   link: 'appwiz.cpl' },
-        { name: 'Command Prompt',      cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/17693/17693164.png', link: 'cmd' },
-        { name: 'Calculator',          cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/2374/2374370.png',   link: 'calc' },
-        { name: 'Keyboard Settings',   cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/4154/4154727.png',   link: 'control keyboard' },
-        { name: 'Notepad',             cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/2272/2272423.png',   link: 'notepad' },
-        { name: 'System Information',  cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/1865/1865273.png',   link: 'msinfo32' },
-        { name: 'Task Manager',        cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/3082/3082827.png',   link: 'taskmgr' },
-        { name: 'On-Screen Keyboard',  cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/13025/13025989.png', link: 'osk' },
-        { name: 'Network Settings',    cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/19005/19005694.png', link: 'ms-settings:network' },
-        { name: 'Firewall',            cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/9578/9578846.png',   link: 'wf.msc' },
-        { name: 'Device Manager',      cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/4622/4622035.png',   link: 'devmgmt.msc' },
-        { name: 'Registry Editor',     cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/10583/10583119.png', link: 'regedit' },
-        { name: 'Date and Time',       cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/10691/10691802.png', link: 'timedate.cpl' },
-        { name: 'Internet Properties', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/929/929464.png',     link: 'inetcpl.cpl' },
-        { name: 'Sound Settings',      cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/2058/2058142.png',   link: 'mmsys.cpl' },
-        { name: 'Power Options',       cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/3686/3686918.png',   link: 'powercfg.cpl' },
-        { name: 'Network Connections', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/4207/4207024.png',   link: 'ncpa.cpl' },
-        { name: 'System Properties',   cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/17990/17990681.png', link: 'sysdm.cpl' },
-        { name: 'Local Users',         cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/8385/8385918.png',   link: 'lusrmgr.msc' },
-        { name: 'Computer Management', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/6024/6024190.png',   link: 'compmgmt.msc' },
-        { name: 'Resource Monitor',    cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/6811/6811394.png',   link: 'resmon' },
-        { name: 'Display Settings',    cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/8727/8727955.png',   link: 'desk.cpl' }
+        { name: 'Control Panel', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/11370/11370128.png', link: 'control' },
+        { name: 'Mouse Settings', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/653/653271.png', link: 'main.cpl' },
+        { name: 'Uninstall Apps', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/6266/6266514.png', link: 'appwiz.cpl' },
+        { name: 'Command Prompt', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/17693/17693164.png', link: 'cmd' },
+        { name: 'Calculator', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/2374/2374370.png', link: 'calc' },
+        { name: 'Keyboard Settings', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/4154/4154727.png', link: 'control keyboard' },
+        { name: 'Notepad', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/2272/2272423.png', link: 'notepad' },
+        { name: 'System Information', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/1865/1865273.png', link: 'msinfo32' },
+        { name: 'Task Manager', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/3082/3082827.png', link: 'taskmgr' },
+        { name: 'On-Screen Keyboard', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/13025/13025989.png', link: 'osk' },
+        { name: 'Network Settings', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/19005/19005694.png', link: 'ms-settings:network' },
+        { name: 'Firewall', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/9578/9578846.png', link: 'wf.msc' },
+        { name: 'Device Manager', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/4622/4622035.png', link: 'devmgmt.msc' },
+        { name: 'Registry Editor', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/10583/10583119.png', link: 'regedit' },
+        { name: 'Date and Time', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/10691/10691802.png', link: 'timedate.cpl' },
+        { name: 'Internet Properties', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/929/929464.png', link: 'inetcpl.cpl' },
+        { name: 'Sound Settings', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/2058/2058142.png', link: 'mmsys.cpl' },
+        { name: 'Power Options', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/3686/3686918.png', link: 'powercfg.cpl' },
+        { name: 'Network Connections', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/4207/4207024.png', link: 'ncpa.cpl' },
+        { name: 'System Properties', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/17990/17990681.png', link: 'sysdm.cpl' },
+        { name: 'Local Users', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/8385/8385918.png', link: 'lusrmgr.msc' },
+        { name: 'Computer Management', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/6024/6024190.png', link: 'compmgmt.msc' },
+        { name: 'Resource Monitor', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/6811/6811394.png', link: 'resmon' },
+        { name: 'Display Settings', cat: 'windows', img: 'https://cdn-icons-png.flaticon.com/128/8727/8727955.png', link: 'desk.cpl' }
     ];
 
     const allTools = [
         // Popular
-        { name: 'Age Calculator',              cat: 'popular', img: 'https://de.apkshub.com/images/7d/com.ng_labs.agecalculator/icon.png', link: 'https://microsoftacademy.github.io/One-Pilot-Age-Analytics/' },
-        { name: 'QR Generator',                cat: 'popular', img: 'https://cdn-icons-png.flaticon.com/128/14021/14021409.png', link: 'https://onepilottools-developer.github.io/QR-Code-Generator/' },
-        { name: 'Merge PDF',                   cat: 'popular', img: 'https://cdn-icons-png.flaticon.com/128/16064/16064382.png', link: 'https://onepilottools-developer.github.io/Merge-PDF/' },
-        { name: 'PDF Compressor',              cat: 'popular', img: 'https://pdfsass.com/admin/uploads/67e11d30c7819-PDFOptim5_icon.png', link: 'https://onepilottools-developer.github.io/My-PDF-Compressor/' },
-        { name: 'PDF to Image',                cat: 'popular', img: 'https://pdf.net/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fpdf-to-jpg-2.ea49d711.png&w=400&q=75', link: 'https://microsoftacademy.github.io/One-Pilot-PDF-to-Image-Pro-Level/' },
-        { name: 'Image to PDF',                cat: 'popular', img: 'https://pdf.net/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fjpg-to-pdf-2.a76ce594.png&w=400&q=75', link: 'https://onepilottools-developer.github.io/Image-to-PDF/' },
-        { name: 'Image Compressor',            cat: 'popular', img: 'https://play-lh.googleusercontent.com/S2MQ9wPwcaop4lMF2tEo8-DRdTVDjmush-RW3mqmeNBZLGbaplS09bwOag35l-sb3o0', link: 'https://onepilottools-developer.github.io/Pro-Image-Compressor/' },
-        { name: 'PDF Page Number',             cat: 'popular', img: 'https://cdn-icons-png.flaticon.com/128/16168/16168415.png', link: 'https://onepilottools-developer.github.io/Pro-PDF-Page-Number/' },
-        { name: 'Image Resizer',               cat: 'popular', img: 'https://store-images.s-microsoft.com/image/apps.38202.13565312217092730.6bd81ec1-1cab-4feb-8d0e-f532f9713e34.1ada795a-5c3d-4e87-a813-0c51e0b8dbf5?h=210', link: 'https://microsoftacademy.github.io/One-Pilot-Image-Converter/' },
+        { name: 'Age Calculator', cat: 'popular', img: 'https://de.apkshub.com/images/7d/com.ng_labs.agecalculator/icon.png', link: 'https://microsoftacademy.github.io/One-Pilot-Age-Analytics/' },
+        { name: 'QR Generator', cat: 'popular', img: 'https://cdn-icons-png.flaticon.com/128/14021/14021409.png', link: 'https://onepilottools-developer.github.io/QR-Code-Generator/' },
+        { name: 'Merge PDF', cat: 'popular', img: 'https://cdn-icons-png.flaticon.com/128/16064/16064382.png', link: 'https://onepilottools-developer.github.io/Merge-PDF/' },
+        { name: 'PDF Compressor', cat: 'popular', img: 'https://pdfsass.com/admin/uploads/67e11d30c7819-PDFOptim5_icon.png', link: 'https://onepilottools-developer.github.io/My-PDF-Compressor/' },
+        { name: 'PDF to Image', cat: 'popular', img: 'https://pdf.net/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fpdf-to-jpg-2.ea49d711.png&w=400&q=75', link: 'https://microsoftacademy.github.io/One-Pilot-PDF-to-Image-Pro-Level/' },
+        { name: 'Image to PDF', cat: 'popular', img: 'https://pdf.net/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fjpg-to-pdf-2.a76ce594.png&w=400&q=75', link: 'https://onepilottools-developer.github.io/Image-to-PDF/' },
+        { name: 'Image Compressor', cat: 'popular', img: 'https://play-lh.googleusercontent.com/S2MQ9wPwcaop4lMF2tEo8-DRdTVDjmush-RW3mqmeNBZLGbaplS09bwOag35l-sb3o0', link: 'https://onepilottools-developer.github.io/Pro-Image-Compressor/' },
+        { name: 'PDF Page Number', cat: 'popular', img: 'https://cdn-icons-png.flaticon.com/128/16168/16168415.png', link: 'https://onepilottools-developer.github.io/Pro-PDF-Page-Number/' },
+        { name: 'Image Resizer', cat: 'popular', img: 'https://store-images.s-microsoft.com/image/apps.38202.13565312217092730.6bd81ec1-1cab-4feb-8d0e-f532f9713e34.1ada795a-5c3d-4e87-a813-0c51e0b8dbf5?h=210', link: 'https://microsoftacademy.github.io/One-Pilot-Image-Converter/' },
         // PDF
-        { name: 'Delete PDF Pages',            cat: 'pdf', img: 'https://play-lh.googleusercontent.com/RzNEhm9PqRO-QUxR7LH9M-Im4O2ELWWFkzLnG4TTNMgz18iNTIxBcPRuu9nto_odDQ=w240-h480-rw', link: 'https://onepilottools-developer.github.io/PDF-Page-Delete-/' },
-        { name: 'PDF Splitter',                cat: 'pdf', img: 'https://lh3.googleusercontent.com/proxy/azXsH6h2Nk8jb4guIn7yR6ajTSdG5Qo_J3gIhlky0jWi9Ha-jPbjH2hTuuRVTwZyafvfjVlN3sSEad4mTRpzU4jGAWP5ozbkbfy62OgVgK2kYnBDmw', link: 'https://microsoftacademy.github.io/Split-PDF/' },
-        { name: 'PDF Watermark',               cat: 'pdf', img: 'https://www.amazing-share.com/images/free-pdf-watermark-creator/icon.png', link: 'https://microsoftacademy.github.io/PDF-Watermark/' },
-        { name: 'PDF Cropper',                 cat: 'pdf', img: 'https://cdn.aptoide.com/imgs/4/5/3/453e0c1410049b5531451a64e78bb2ad_icon.png', link: 'https://microsoftacademy.github.io/PDF-Cropper/' },
-        { name: 'PDF Studio',                  cat: 'pdf', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZDBwxP4PtSj2Xcv9tbKSOlaTZhUWhZAykpQ&s', link: 'https://microsoftacademy.github.io/PDF-Studio/' },
-        { name: 'PDF Page Counter',            cat: 'pdf', img: 'https://s.softdeluxe.com/icons/png/128/1398/1398668.png', link: 'https://onepilottools-developer.github.io/PDF-Page-Counter/' },
-        { name: 'Rearrange PDF Pages',         cat: 'pdf', img: 'https://cdn-icons-png.flaticon.com/512/3580/3580370.png', link: 'https://microsoftacademy.github.io/Rearrange-PDF-Pages/' },
-        { name: 'Grayscale PDF',               cat: 'pdf', img: 'https://static.vecteezy.com/system/resources/thumbnails/052/656/899/small/black-and-white-parrot-illustration-png.png', link: 'https://onepilottools-developer.github.io/Grayscale-PDF/' },
+        { name: 'Delete PDF Pages', cat: 'pdf', img: 'https://play-lh.googleusercontent.com/RzNEhm9PqRO-QUxR7LH9M-Im4O2ELWWFkzLnG4TTNMgz18iNTIxBcPRuu9nto_odDQ=w240-h480-rw', link: 'https://onepilottools-developer.github.io/PDF-Page-Delete-/' },
+        { name: 'PDF Splitter', cat: 'pdf', img: 'https://lh3.googleusercontent.com/proxy/azXsH6h2Nk8jb4guIn7yR6ajTSdG5Qo_J3gIhlky0jWi9Ha-jPbjH2hTuuRVTwZyafvfjVlN3sSEad4mTRpzU4jGAWP5ozbkbfy62OgVgK2kYnBDmw', link: 'https://microsoftacademy.github.io/Split-PDF/' },
+        { name: 'PDF Watermark', cat: 'pdf', img: 'https://www.amazing-share.com/images/free-pdf-watermark-creator/icon.png', link: 'https://microsoftacademy.github.io/PDF-Watermark/' },
+        { name: 'PDF Cropper', cat: 'pdf', img: 'https://cdn.aptoide.com/imgs/4/5/3/453e0c1410049b5531451a64e78bb2ad_icon.png', link: 'https://microsoftacademy.github.io/PDF-Cropper/' },
+        { name: 'PDF Studio', cat: 'pdf', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZDBwxP4PtSj2Xcv9tbKSOlaTZhUWhZAykpQ&s', link: 'https://microsoftacademy.github.io/PDF-Studio/' },
+        { name: 'PDF Page Counter', cat: 'pdf', img: 'https://s.softdeluxe.com/icons/png/128/1398/1398668.png', link: 'https://onepilottools-developer.github.io/PDF-Page-Counter/' },
+        { name: 'Rearrange PDF Pages', cat: 'pdf', img: 'https://cdn-icons-png.flaticon.com/512/3580/3580370.png', link: 'https://microsoftacademy.github.io/Rearrange-PDF-Pages/' },
+        { name: 'Grayscale PDF', cat: 'pdf', img: 'https://static.vecteezy.com/system/resources/thumbnails/052/656/899/small/black-and-white-parrot-illustration-png.png', link: 'https://onepilottools-developer.github.io/Grayscale-PDF/' },
         // Image
-        { name: '30 Photos on A4',             cat: 'image', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfTI84Gid67xpikzk-aDeTfx_IoHDsmPl1HQ&s', link: 'https://microsoftacademy.github.io/One-Pilot-Pro-Level-30-Photos/' },
-        { name: '6 Photos 4*6',               cat: 'image', img: 'https://onepilottools.com/wp-content/uploads/2026/01/crop-1.jpg', link: 'https://microsoftacademy.github.io/One-Pilot-6-Passport-Photos/' },
-        { name: '8 Photos 4*6',               cat: 'image', img: 'https://i.pinimg.com/736x/1d/93/b6/1d93b67e77389cfbb3d65f0726875ad9.jpg', link: 'https://microsoftacademy.github.io/One-Pilot-8-Passport-Photos-on-4-6-Sheet/' },
-        { name: 'Image Cropper',               cat: 'image', img: 'https://cropper.madza.dev/scissors.png', link: 'https://onepilottools-developer.github.io/Pro-Image-Cropper/' },
-        { name: 'Image to Sketch',             cat: 'image', img: 'https://png.pngtree.com/png-clipart/20241111/original/pngtree-pencil-sketch-drawing-of-a-cute-cat-animal-isolated-on-transparent-png-image_16895725.png', link: 'https://onepilottools-developer.github.io/Pro-Image-to-Sketch/' },
-        { name: 'Image Transparency',          cat: 'image', img: 'https://cdn-icons-png.flaticon.com/128/1355/1355248.png', link: 'https://microsoftacademy.github.io/Image-Transparency/' },
-        { name: 'Image Converter',             cat: 'image', img: 'https://cdn-icons-png.flaticon.com/128/13434/13434909.png', link: 'https://onepilottools-developer.github.io/Pro-Image-converter/' },
-        { name: 'Grayscale Image',             cat: 'image', img: 'https://cdn-icons-png.flaticon.com/128/10097/10097500.png', link: 'https://microsoftacademy.github.io/Grayscale-Image/' },
-        { name: 'Image Round Corner',          cat: 'image', img: 'https://cdn-icons-png.flaticon.com/128/1014/1014817.png', link: 'https://microsoftacademy.github.io/Image-Round-Corner/' },
-        { name: 'Watermark Photos',            cat: 'image', img: 'https://cdn-icons-png.flaticon.com/128/12709/12709451.png', link: 'https://microsoftacademy.github.io/Text-on-Image/' },
-        { name: 'Image Filter Studio',         cat: 'image', img: 'https://cdn-icons-png.flaticon.com/128/2983/2983067.png', link: 'https://microsoftacademy.github.io/My-Filter-Studio/' },
-        { name: 'Rotate Image',                cat: 'image', img: 'https://cdn-icons-png.flaticon.com/512/6815/6815945.png', link: 'https://microsoftacademy.github.io/Rotate-Image/' },
+        { name: '30 Photos on A4', cat: 'image', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfTI84Gid67xpikzk-aDeTfx_IoHDsmPl1HQ&s', link: 'https://microsoftacademy.github.io/One-Pilot-Pro-Level-30-Photos/' },
+        { name: '6 Photos 4*6', cat: 'image', img: 'https://onepilottools.com/wp-content/uploads/2026/01/crop-1.jpg', link: 'https://microsoftacademy.github.io/One-Pilot-6-Passport-Photos/' },
+        { name: '8 Photos 4*6', cat: 'image', img: 'https://i.pinimg.com/736x/1d/93/b6/1d93b67e77389cfbb3d65f0726875ad9.jpg', link: 'https://microsoftacademy.github.io/One-Pilot-8-Passport-Photos-on-4-6-Sheet/' },
+        { name: 'Image Cropper', cat: 'image', img: 'https://cropper.madza.dev/scissors.png', link: 'https://onepilottools-developer.github.io/Pro-Image-Cropper/' },
+        { name: 'Image to Sketch', cat: 'image', img: 'https://png.pngtree.com/png-clipart/20241111/original/pngtree-pencil-sketch-drawing-of-a-cute-cat-animal-isolated-on-transparent-png-image_16895725.png', link: 'https://onepilottools-developer.github.io/Pro-Image-to-Sketch/' },
+        { name: 'Image Transparency', cat: 'image', img: 'https://cdn-icons-png.flaticon.com/128/1355/1355248.png', link: 'https://microsoftacademy.github.io/Image-Transparency/' },
+        { name: 'Image Converter', cat: 'image', img: 'https://cdn-icons-png.flaticon.com/128/13434/13434909.png', link: 'https://onepilottools-developer.github.io/Pro-Image-converter/' },
+        { name: 'Grayscale Image', cat: 'image', img: 'https://cdn-icons-png.flaticon.com/128/10097/10097500.png', link: 'https://microsoftacademy.github.io/Grayscale-Image/' },
+        { name: 'Image Round Corner', cat: 'image', img: 'https://cdn-icons-png.flaticon.com/128/1014/1014817.png', link: 'https://microsoftacademy.github.io/Image-Round-Corner/' },
+        { name: 'Watermark Photos', cat: 'image', img: 'https://cdn-icons-png.flaticon.com/128/12709/12709451.png', link: 'https://microsoftacademy.github.io/Text-on-Image/' },
+        { name: 'Image Filter Studio', cat: 'image', img: 'https://cdn-icons-png.flaticon.com/128/2983/2983067.png', link: 'https://microsoftacademy.github.io/My-Filter-Studio/' },
+        { name: 'Rotate Image', cat: 'image', img: 'https://cdn-icons-png.flaticon.com/512/6815/6815945.png', link: 'https://microsoftacademy.github.io/Rotate-Image/' },
         // Utility
-        { name: 'Blur Image',                  cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/512/7556/7556061.png', link: 'https://microsoftacademy.github.io/One-Pilot-Blur-Image/' },
-        { name: 'Number to Words',             cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/256/5238/5238462.png', link: 'https://microsoftacademy.github.io/Number-to-Word/' },
-        { name: 'Fancy Name Generator',        cat: 'utility', img: 'https://png.pngtree.com/png-vector/20250109/ourmid/pngtree-an-elegant-decorative-illustration-the-word-welcome-in-a-bold-and-png-image_15109443.png', link: 'https://microsoftacademy.github.io/Fancy-Name-Generator/' },
-        { name: 'Bulk File Renamer',           cat: 'utility', img: 'https://www.freeiconspng.com/uploads/wonderful-pdf-icon-logo-6.png', link: 'https://onepilottools-developer.github.io/Pro-and-Advanced-Bulk-File-Renamer/' },
-        { name: 'JPG to PNG',                  cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/128/13434/13434934.png', link: 'https://microsoftacademy.github.io/JPG-to-PNG/' },
-        { name: 'PNG to JPG',                  cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/128/15201/15201339.png', link: 'https://microsoftacademy.github.io/Png-to-JPG/#' },
-        { name: 'NIC',                         cat: 'utility', img: 'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcT7LTGZ25hFGdM-pkK-6dg3zwyrar5ZS_Xhu1J9CK16wQNLkjYx', link: 'https://microsoftacademy.github.io/WhatsApp-NIC-Front-Back-/' },
-        { name: 'Job Studio',                  cat: 'utility', img: 'https://www.freepnglogos.com/uploads/camera-logo-png/camera-logo-download-clipart-24.png', link: 'https://microsoftacademy.github.io/Job-Studio/' },
-        { name: 'Loan Calculator',             cat: 'utility', img: 'https://static.vecteezy.com/system/resources/thumbnails/058/487/394/small/3d-modern-calculator-with-percentage-sign-icon-png.png', link: 'https://microsoftacademy.github.io/EMI-Loan-Calculator-PKR-/' },
-        { name: 'Secret Message',              cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/512/7677/7677735.png', link: 'https://microsoftacademy.github.io/One-Pilot-Secret-Message-Pro/' },
-        { name: 'Percentage Calculator',       cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/512/7909/7909329.png', link: 'https://microsoftacademy.github.io/Smart-Percentage-Calculator/' },
-        { name: 'Discount Calculator',         cat: 'utility', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2F7vH46yGn0jlEVDXnQ5g0mhkLJpovAHyDw&s', link: 'https://microsoftacademy.github.io/Discount-Calculator/' },
-        { name: 'Unit Converter',              cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/128/16515/16515400.png', link: 'https://microsoftacademy.github.io/Unit-Converter/' },
-        { name: 'Notepad Editor',              cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/128/4371/4371047.png', link: 'https://microsoftacademy.github.io/Pro-Notepad/' },
-        { name: 'Driving License Cropper',     cat: 'utility', img: 'https://www.centralmndrivingacademy.com/images/btw.png', link: 'https://microsoftacademy.github.io/Driving-License-Cropper/' },
-        { name: 'Youtube Thumbnail Downloader',cat: 'utility', img: 'https://images.vexels.com/media/users/3/141531/isolated/preview/258bb008cb4673875e33d9ecd1c31da9-youtube-round-metal-button.png?w=360', link: 'https://onepilottools.com/youtube-thumbnail-generator/' },
+        { name: 'Blur Image', cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/512/7556/7556061.png', link: 'https://microsoftacademy.github.io/One-Pilot-Blur-Image/' },
+        { name: 'Number to Words', cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/256/5238/5238462.png', link: 'https://microsoftacademy.github.io/Number-to-Word/' },
+        { name: 'Fancy Name Generator', cat: 'utility', img: 'https://png.pngtree.com/png-vector/20250109/ourmid/pngtree-an-elegant-decorative-illustration-the-word-welcome-in-a-bold-and-png-image_15109443.png', link: 'https://microsoftacademy.github.io/Fancy-Name-Generator/' },
+        { name: 'Bulk File Renamer', cat: 'utility', img: 'https://www.freeiconspng.com/uploads/wonderful-pdf-icon-logo-6.png', link: 'https://onepilottools-developer.github.io/Pro-and-Advanced-Bulk-File-Renamer/' },
+        { name: 'JPG to PNG', cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/128/13434/13434934.png', link: 'https://microsoftacademy.github.io/JPG-to-PNG/' },
+        { name: 'PNG to JPG', cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/128/15201/15201339.png', link: 'https://microsoftacademy.github.io/Png-to-JPG/#' },
+        { name: 'NIC', cat: 'utility', img: 'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcT7LTGZ25hFGdM-pkK-6dg3zwyrar5ZS_Xhu1J9CK16wQNLkjYx', link: 'https://microsoftacademy.github.io/WhatsApp-NIC-Front-Back-/' },
+        { name: 'Job Studio', cat: 'utility', img: 'https://www.freepnglogos.com/uploads/camera-logo-png/camera-logo-download-clipart-24.png', link: 'https://microsoftacademy.github.io/Job-Studio/' },
+        { name: 'Loan Calculator', cat: 'utility', img: 'https://static.vecteezy.com/system/resources/thumbnails/058/487/394/small/3d-modern-calculator-with-percentage-sign-icon-png.png', link: 'https://microsoftacademy.github.io/EMI-Loan-Calculator-PKR-/' },
+        { name: 'Secret Message', cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/512/7677/7677735.png', link: 'https://microsoftacademy.github.io/One-Pilot-Secret-Message-Pro/' },
+        { name: 'Percentage Calculator', cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/512/7909/7909329.png', link: 'https://microsoftacademy.github.io/Smart-Percentage-Calculator/' },
+        { name: 'Discount Calculator', cat: 'utility', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2F7vH46yGn0jlEVDXnQ5g0mhkLJpovAHyDw&s', link: 'https://microsoftacademy.github.io/Discount-Calculator/' },
+        { name: 'Unit Converter', cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/128/16515/16515400.png', link: 'https://microsoftacademy.github.io/Unit-Converter/' },
+        { name: 'Notepad Editor', cat: 'utility', img: 'https://cdn-icons-png.flaticon.com/128/4371/4371047.png', link: 'https://microsoftacademy.github.io/Pro-Notepad/' },
+        { name: 'Driving License Cropper', cat: 'utility', img: 'https://www.centralmndrivingacademy.com/images/btw.png', link: 'https://microsoftacademy.github.io/Driving-License-Cropper/' },
+        { name: 'Youtube Thumbnail Downloader', cat: 'utility', img: 'https://images.vexels.com/media/users/3/141531/isolated/preview/258bb008cb4673875e33d9ecd1c31da9-youtube-round-metal-button.png?w=360', link: 'https://onepilottools.com/youtube-thumbnail-generator/' },
         // AI
-        { name: 'Email Writer',                cat: 'ai', img: 'https://cdn-icons-png.flaticon.com/128/5968/5968534.png', link: 'https://onepilottools-developer.github.io/Gmail-Writer/' },
-        { name: 'CV Points Generator',         cat: 'ai', img: 'https://cdn-icons-png.freepik.com/512/11528/11528303.png', link: 'https://microsoftacademy.github.io/CV-Points-Generator/' },
-        { name: 'Experience Generator',        cat: 'ai', img: 'https://i0.wp.com/experiencearchit3cts.com/wp-content/uploads/2024/09/recommend.png?resize=512,512&ssl=1', link: 'https://microsoftacademy.github.io/Experience-Generator/' },
-        { name: 'Book Cover Downloader',       cat: 'ai', img: 'https://cdn-icons-png.flaticon.com/512/11462/11462534.png', link: 'https://microsoftacademy.github.io/Book-Cover-Downloader/' },
-        { name: 'Grammar Checker',             cat: 'ai', img: 'https://cdn-icons-png.flaticon.com/128/12206/12206031.png', link: 'https://onepilottools-developer.github.io/One-Pilot-Grammar-Checker/' },
-        { name: 'Text Summarizer',             cat: 'ai', img: 'https://images.digitaltools.nz/summarify/icon_small.png', link: 'https://onepilottools-developer.github.io/OnePilot-AI-Summarizer/' },
-        { name: 'Url to Image',                cat: 'ai', img: 'https://thumbs.dreamstime.com/b/internet-logo-19273000.jpg', link: 'https://onepilottools-developer.github.io/URL-to-Image/' },
-        { name: 'Career Roadmap',              cat: 'ai', img: 'https://cdn-icons-png.flaticon.com/128/5382/5382037.png', link: 'https://onepilottools-developer.github.io/Career-Roadmap/' },
-        { name: 'Slide Master',                cat: 'ai', img: 'https://png.pngtree.com/png-vector/20240524/ourmid/pngtree-instagram-app-icon-colorful-camera-flat-icon-flat-design-vector-logo-png-image_6922830.png', link: 'https://onepilottools-developer.github.io/Slide-Master/' },
+        { name: 'Email Writer', cat: 'ai', img: 'https://cdn-icons-png.flaticon.com/128/5968/5968534.png', link: 'https://onepilottools-developer.github.io/Gmail-Writer/' },
+        { name: 'CV Points Generator', cat: 'ai', img: 'https://cdn-icons-png.freepik.com/512/11528/11528303.png', link: 'https://microsoftacademy.github.io/CV-Points-Generator/' },
+        { name: 'Experience Generator', cat: 'ai', img: 'https://i0.wp.com/experiencearchit3cts.com/wp-content/uploads/2024/09/recommend.png?resize=512,512&ssl=1', link: 'https://microsoftacademy.github.io/Experience-Generator/' },
+        { name: 'Book Cover Downloader', cat: 'ai', img: 'https://cdn-icons-png.flaticon.com/512/11462/11462534.png', link: 'https://microsoftacademy.github.io/Book-Cover-Downloader/' },
+        { name: 'Grammar Checker', cat: 'ai', img: 'https://cdn-icons-png.flaticon.com/128/12206/12206031.png', link: 'https://onepilottools-developer.github.io/One-Pilot-Grammar-Checker/' },
+        { name: 'Text Summarizer', cat: 'ai', img: 'https://images.digitaltools.nz/summarify/icon_small.png', link: 'https://onepilottools-developer.github.io/OnePilot-AI-Summarizer/' },
+        { name: 'Url to Image', cat: 'ai', img: 'https://thumbs.dreamstime.com/b/internet-logo-19273000.jpg', link: 'https://onepilottools-developer.github.io/URL-to-Image/' },
+        { name: 'Career Roadmap', cat: 'ai', img: 'https://cdn-icons-png.flaticon.com/128/5382/5382037.png', link: 'https://onepilottools-developer.github.io/Career-Roadmap/' },
+        { name: 'Slide Master', cat: 'ai', img: 'https://png.pngtree.com/png-vector/20240524/ourmid/pngtree-instagram-app-icon-colorful-camera-flat-icon-flat-design-vector-logo-png-image_6922830.png', link: 'https://onepilottools-developer.github.io/Slide-Master/' },
         // WhatsApp / Social
-        { name: 'Customer Connect',            cat: 'social', img: 'https://cdn-icons-png.flaticon.com/128/3536/3536445.png', link: 'https://microsoftacademy.github.io/Customer-Connect/' },
-        { name: 'WhatsApp QR Code',            cat: 'social', img: 'https://downloadr2.apkmirror.com/wp-content/uploads/2018/03/5ab00b70e3906.png', link: 'https://microsoftacademy.github.io/WhatsApp-QR-Code-Generator/' },
-        { name: 'WhatsApp Editor',             cat: 'social', img: 'https://cdn-icons-png.flaticon.com/128/2504/2504957.png', link: 'https://microsoftacademy.github.io/WhatsApp-Pro-Editor/' },
+        { name: 'Customer Connect', cat: 'social', img: 'https://cdn-icons-png.flaticon.com/128/3536/3536445.png', link: 'https://microsoftacademy.github.io/Customer-Connect/' },
+        { name: 'WhatsApp QR Code', cat: 'social', img: 'https://downloadr2.apkmirror.com/wp-content/uploads/2018/03/5ab00b70e3906.png', link: 'https://microsoftacademy.github.io/WhatsApp-QR-Code-Generator/' },
+        { name: 'WhatsApp Editor', cat: 'social', img: 'https://cdn-icons-png.flaticon.com/128/2504/2504957.png', link: 'https://microsoftacademy.github.io/WhatsApp-Pro-Editor/' },
         // About
-        { name: 'Developer Portfolio',         cat: 'about', img: 'https://cdn-icons-png.freepik.com/256/16382/16382301.png?semt=ais_white_label', link: 'https://microsoftacademy.github.io/About-One-Pilot/' },
-        { name: 'Our Mission',                 cat: 'about', img: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcS--F7H3rl2fgGwhVvJmU7lPyx_QS74equb-9tPC4Rmg3rOTAKy', link: 'https://onepilottools-developer.github.io/Our-Mission/' },
-        { name: 'Contact Us',                  cat: 'about', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQi1OcRoXEuuCxuaSd9GPC9heMmAl59lXTwvDZqTYOrhmdVR1Ea', link: 'https://onepilottools-developer.github.io/Contact-Us/' },
+        { name: 'Developer Portfolio', cat: 'about', img: 'https://cdn-icons-png.freepik.com/256/16382/16382301.png?semt=ais_white_label', link: 'https://microsoftacademy.github.io/About-One-Pilot/' },
+        { name: 'Our Mission', cat: 'about', img: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcS--F7H3rl2fgGwhVvJmU7lPyx_QS74equb-9tPC4Rmg3rOTAKy', link: 'https://onepilottools-developer.github.io/Our-Mission/' },
+        { name: 'Contact Us', cat: 'about', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQi1OcRoXEuuCxuaSd9GPC9heMmAl59lXTwvDZqTYOrhmdVR1Ea', link: 'https://onepilottools-developer.github.io/Contact-Us/' },
 
         // ══ SOFTWARE (6 cards - open in NEW TAB) ══
-        { name: 'Winrar',                cat: 'software', img: 'https://sc.filehippo.net/images/t_app-icon-l/p/c3152528-96bf-11e6-b8e7-00163ed833e7/3833258526/winrar-64-icon.png',   link: 'https://www.mediafire.com/file/qtbviitz8nxv4e5/winrar-x64-701.exe/file' },
-        { name: 'VLC Media Player',            cat: 'software', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/VLC_Icon.svg/960px-VLC_Icon.svg.png',   link: 'https://www.mediafire.com/file/dyeuswvvse1tutb/vlc-3.0.20-win64.exe/file' },
-        { name: 'Foxit PDF Reader',                      cat: 'software', img: 'https://4simaging.com/wp-content/uploads/2018/04/icon-file.png', link: 'https://www.mediafire.com/file/mtnrc59xb6jgepp/Foxit.exe/file' },
-        { name: 'Typing Master',               cat: 'software', img: 'https://www.typingmaster.com/img/tm11logo.png',   link: 'https://www.mediafire.com/file/ae641x9hy27r8zx/TypingMaster12.exe/file' },
-        { name: 'MS Office 2019',                 cat: 'software', img: 'https://img.utdstc.com/icon/dcc/387/dcc38728dbc270465816a1db09b3569255ca48cfcac8047eb2088fdd78d0f8c0:200', link: 'https://www.mediafire.com/file/gqhv8yhh1ies24j/Microsoft_Office_2019.rar/file' },
-        { name: 'Office and Window Activator',                   cat: 'software', img: 'https://media.imgcdn.org/repo/2023/03/microsoft-activation-scripts/68997f561743f-microsoft-activation-scripts-Icon.webp', link: 'https://www.mediafire.com/file/tnf068euzwrphuw/HEU.rar/file' },
-{ name: 'Google Chrome',                   cat: 'software', img: 'https://companylogos.org/wp-content/uploads/2025/02/Google-Chrome-2011-300x300.png', link: 'https://www.google.com/intl/en_pk/chrome/' },
-      { name: 'Avast Antivirus',                   cat: 'software', img: 'https://upload.wikimedia.org/wikipedia/commons/4/4e/Avast_Software_white_logo.png', link: 'https://www.mediafire.com/file/v0yvppk25omtau8/Avast+Antivirus+++Key.rar/file' },
-      { name: 'Urdu Inpage',                   cat: 'software', img: 'https://aatayyab.wordpress.com/wp-content/uploads/2018/11/untitled5.jpg', link: 'https://www.mediafire.com/file/opc9vp0jw6qpxgr/InPage_2009_Professional.exe/file' },
-      { name: 'Phonetic Keyboard',                   cat: 'software', img: 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Advanced-Installer-logo.png', link: 'https://www.mediafire.com/file/z72cpl300a9nxk7/Urdu_Phonetic_Keyboard.zip/file' },
-      { name: 'Camtasia ',                   cat: 'software', img: 'https://lehrpfade.th-koeln.de/wp-content/uploads/2022/04/Camtasia_Logo.webp', link: 'https://www.mediafire.com/file/ef45ocsjz9xa1ab/Camtasia_9.0.rar/file' },
-      { name: 'IDM',                   cat: 'software', img: 'https://i0.wp.com/webkumal.com/storage/2023/03/idm.webp?fit=200%2C200&ssl=1', link: 'https://www.mediafire.com/file/dxfbmlv9ojsxaks/idman642build20.exe/file' },
-      { name: 'Folder Locker',                   cat: 'software', img: 'https://static.vecteezy.com/system/resources/thumbnails/070/916/807/small/3d-rendered-blue-folder-with-yellow-lock-icon-isolated-on-transparent-background-png.png', link: 'https://www.mediafire.com/file/2kcanrst716v7pk/Anvi_Folder_Locker.rar/file' },
-      { name: 'Baidu PC Faster',                   cat: 'software', img: 'https://images.dwncdn.net/images/t_app-icon-l/p/77ef6650-984a-4e39-8987-8f36c611eeb7/2739181822/18512_4-75908802-imgingest-4181009235132565235.png', link: 'https://www.mediafire.com/file/ix4skqenek9k0yk/baidu-pc-faster-5-1-multi-win.exe/file' },
-      { name: 'PDF Gear',                   cat: 'software', img: 'https://png.pngtree.com/png-clipart/20250507/original/pngtree-modern-3d-icon-stylized-pdf-document-png-image_20937175.png', link: 'https://www.mediafire.com/file/8k5xzd8s4uql3gh/pdfgear_setup_v2.1.14.exe/file' },
-      { name: 'Snipping Tools',                   cat: 'software', img: 'https://upload.wikimedia.org/wikipedia/vi/8/82/Icon_Snipping_Tool.png', link: 'https://www.mediafire.com/file/d5zfvns404z2fg9/My+SnippingTool-7.rar/file' },
-      { name: 'Handbrake',                   cat: 'software', img: 'https://upload.wikimedia.org/wikipedia/commons/d/d9/HandBrake_Icon.png', link: 'https://www.mediafire.com/file/luhdq4yuk2v9ivu/HandBrake_V1.9.0.exe/file' },
-      { name: 'Rufus',                   cat: 'software', img: 'https://upload.wikimedia.org/wikipedia/commons/d/de/Rufus-logo.png', link: 'https://www.mediafire.com/file/zxuznx5bmqfolip/Rufus.rar/file' },
-      { name: 'Corel Draw 2025',                 
-       cat: 'software', img: 'https://www.freeiconspng.com/uploads/corel-draw-logo-icon-1.png', link: 'https://www.mediafire.com/file/vppayj90ku54du9/CorelDRAW+2025+Key.rar/file' },
-      { name: '7Zip',                   cat: 'software', img: 'https://alternative.me/media/256/7-zip-icon-ojip13dztk5wswcp-c.png', link: 'https://www.mediafire.com/file/pma86ik023a0958/7-Zip.exe/file' },
-      { name: 'Adobe Photoshop 7',                   cat: 'software', img: 'https://icons.iconarchive.com/icons/gimilkhor/adobe/256/Photoshop-7-A-icon.png', link: 'https://www.mediafire.com/file/atvhvfb029chwwp/Adobe+Photoshop+++Key.rar/file' },
-       { name: 'Filmora 2025',                   cat: 'software', img: 'https://static.vecteezy.com/system/resources/previews/048/759/330/non_2x/filmora-transparent-icon-free-png.png', link: 'https://www.mediafire.com/file/wgn4hppg646k0ju/Filmora+++Key.rar/file' },
-       { name: 'Driver Easy',                   cat: 'software', img: 'https://www.crackshere.com/wp-content/uploads/2025/05/driver-easy-pro-cracked.webp', link: 'https://www.mediafire.com/file/10nj00o89p95bbc/(Driver+Easy+Professional).rar/file' },
-       { name: 'USB Security',                   cat: 'software', img: 'https://static.vecteezy.com/system/resources/thumbnails/053/716/526/small/illustration-of-a-black-usb-flash-drive-on-a-transparent-background-highlighting-modern-data-storage-solutions-and-portable-device-connectivity-png.png', link: 'https://www.mediafire.com/file/c2dlcmjvxa9qbey/USB+Security.rar/file' },
+        { name: 'Winrar', cat: 'software', img: 'https://sc.filehippo.net/images/t_app-icon-l/p/c3152528-96bf-11e6-b8e7-00163ed833e7/3833258526/winrar-64-icon.png', link: 'https://www.mediafire.com/file/qtbviitz8nxv4e5/winrar-x64-701.exe/file' },
+        { name: 'VLC Media Player', cat: 'software', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/VLC_Icon.svg/960px-VLC_Icon.svg.png', link: 'https://www.mediafire.com/file/dyeuswvvse1tutb/vlc-3.0.20-win64.exe/file' },
+        { name: 'Foxit PDF Reader', cat: 'software', img: 'https://4simaging.com/wp-content/uploads/2018/04/icon-file.png', link: 'https://www.mediafire.com/file/mtnrc59xb6jgepp/Foxit.exe/file' },
+        { name: 'Typing Master', cat: 'software', img: 'https://www.typingmaster.com/img/tm11logo.png', link: 'https://www.mediafire.com/file/ae641x9hy27r8zx/TypingMaster12.exe/file' },
+        { name: 'MS Office 2019', cat: 'software', img: 'https://img.utdstc.com/icon/dcc/387/dcc38728dbc270465816a1db09b3569255ca48cfcac8047eb2088fdd78d0f8c0:200', link: 'https://www.mediafire.com/file/gqhv8yhh1ies24j/Microsoft_Office_2019.rar/file' },
+        { name: 'Office and Window Activator', cat: 'software', img: 'https://media.imgcdn.org/repo/2023/03/microsoft-activation-scripts/68997f561743f-microsoft-activation-scripts-Icon.webp', link: 'https://www.mediafire.com/file/tnf068euzwrphuw/HEU.rar/file' },
+        { name: 'Google Chrome', cat: 'software', img: 'https://companylogos.org/wp-content/uploads/2025/02/Google-Chrome-2011-300x300.png', link: 'https://www.google.com/intl/en_pk/chrome/' },
+        { name: 'Avast Antivirus', cat: 'software', img: 'https://upload.wikimedia.org/wikipedia/commons/4/4e/Avast_Software_white_logo.png', link: 'https://www.mediafire.com/file/v0yvppk25omtau8/Avast+Antivirus+++Key.rar/file' },
+        { name: 'Urdu Inpage', cat: 'software', img: 'https://aatayyab.wordpress.com/wp-content/uploads/2018/11/untitled5.jpg', link: 'https://www.mediafire.com/file/opc9vp0jw6qpxgr/InPage_2009_Professional.exe/file' },
+        { name: 'Phonetic Keyboard', cat: 'software', img: 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Advanced-Installer-logo.png', link: 'https://www.mediafire.com/file/z72cpl300a9nxk7/Urdu_Phonetic_Keyboard.zip/file' },
+        { name: 'Camtasia', cat: 'software', img: 'https://lehrpfade.th-koeln.de/wp-content/uploads/2022/04/Camtasia_Logo.webp', link: 'https://www.mediafire.com/file/ef45ocsjz9xa1ab/Camtasia_9.0.rar/file' },
+        { name: 'IDM', cat: 'software', img: 'https://i0.wp.com/webkumal.com/storage/2023/03/idm.webp?fit=200%2C200&ssl=1', link: 'https://www.mediafire.com/file/dxfbmlv9ojsxaks/idman642build20.exe/file' },
+        { name: 'Folder Locker', cat: 'software', img: 'https://static.vecteezy.com/system/resources/thumbnails/070/916/807/small/3d-rendered-blue-folder-with-yellow-lock-icon-isolated-on-transparent-background-png.png', link: 'https://www.mediafire.com/file/2kcanrst716v7pk/Anvi_Folder_Locker.rar/file' },
+        { name: 'Baidu PC Faster', cat: 'software', img: 'https://images.dwncdn.net/images/t_app-icon-l/p/77ef6650-984a-4e39-8987-8f36c611eeb7/2739181822/18512_4-75908802-imgingest-4181009235132565235.png', link: 'https://www.mediafire.com/file/ix4skqenek9k0yk/baidu-pc-faster-5-1-multi-win.exe/file' },
+        { name: 'PDF Gear', cat: 'software', img: 'https://png.pngtree.com/png-clipart/20250507/original/pngtree-modern-3d-icon-stylized-pdf-document-png-image_20937175.png', link: 'https://www.mediafire.com/file/8k5xzd8s4uql3gh/pdfgear_setup_v2.1.14.exe/file' },
+        { name: 'Snipping Tools', cat: 'software', img: 'https://upload.wikimedia.org/wikipedia/vi/8/82/Icon_Snipping_Tool.png', link: 'https://www.mediafire.com/file/d5zfvns404z2fg9/My+SnippingTool-7.rar/file' },
+        { name: 'Handbrake', cat: 'software', img: 'https://upload.wikimedia.org/wikipedia/commons/d/d9/HandBrake_Icon.png', link: 'https://www.mediafire.com/file/luhdq4yuk2v9ivu/HandBrake_V1.9.0.exe/file' },
+        { name: 'Rufus', cat: 'software', img: 'https://upload.wikimedia.org/wikipedia/commons/d/de/Rufus-logo.png', link: 'https://www.mediafire.com/file/zxuznx5bmqfolip/Rufus.rar/file' },
+        { name: 'Corel Draw 2025', cat: 'software', img: 'https://www.freeiconspng.com/uploads/corel-draw-logo-icon-1.png', link: 'https://www.mediafire.com/file/vppayj90ku54du9/CorelDRAW+2025+Key.rar/file' },
+        { name: '7Zip', cat: 'software', img: 'https://alternative.me/media/256/7-zip-icon-ojip13dztk5wswcp-c.png', link: 'https://www.mediafire.com/file/pma86ik023a0958/7-Zip.exe/file' },
+        { name: 'Adobe Photoshop 7', cat: 'software', img: 'https://icons.iconarchive.com/icons/gimilkhor/adobe/256/Photoshop-7-A-icon.png', link: 'https://www.mediafire.com/file/atvhvfb029chwwp/Adobe+Photoshop+++Key.rar/file' },
+        { name: 'Filmora 2025', cat: 'software', img: 'https://static.vecteezy.com/system/resources/previews/048/759/330/non_2x/filmora-transparent-icon-free-png.png', link: 'https://www.mediafire.com/file/wgn4hppg646k0ju/Filmora+++Key.rar/file' },
+        { name: 'Driver Easy', cat: 'software', img: 'https://www.crackshere.com/wp-content/uploads/2025/05/driver-easy-pro-cracked.webp', link: 'https://www.mediafire.com/file/10nj00o89p95bbc/(Driver+Easy+Professional).rar/file' },
+        { name: 'USB Security', cat: 'software', img: 'https://static.vecteezy.com/system/resources/thumbnails/053/716/526/small/illustration-of-a-black-usb-flash-drive-on-a-transparent-background-highlighting-modern-data-storage-solutions-and-portable-device-connectivity-png.png', link: 'https://www.mediafire.com/file/c2dlcmjvxa9qbey/USB+Security.rar/file' },
       
         // ══ ONE PILOT BOOKMARKS (6 cards — open in NEW TAB) ══
-        { name: 'Video Guide',       cat: 'bookmarks', img: 'https://cdn-icons-png.flaticon.com/128/7875/7875375.png', link: 'https://onepilottools.com' },
-        { name: 'OnePilot Bookmarks',             cat: 'bookmarks', img: 'https://cdn-icons-png.flaticon.com/128/2702/2702602.png',    link: 'https://onepilot-bookmarks.netlify.app/' },
-        { name: 'Redirect New Tab',            cat: 'bookmarks', img: 'https://cdn.shopify.com/app-store/listing_images/cacdb6088b2158ea99761004a3f94dbc/icon/CJqiuZa6mJIDEAE=.png', link: 'https://chromewebstore.google.com/detail/new-tab-redirect/icpgjfneehieebagbmdbhnlpiopdcmna?pli=1' },
-        
+        { name: 'Video Guide', cat: 'bookmarks', img: 'https://cdn-icons-png.flaticon.com/128/7875/7875375.png', link: 'https://onepilottools.com' },
+        { name: 'OnePilot Bookmarks', cat: 'bookmarks', img: 'https://cdn-icons-png.flaticon.com/128/2702/2702602.png', link: 'https://onepilot-bookmarks.netlify.app/' },
+        { name: 'Redirect New Tab', cat: 'bookmarks', img: 'https://cdn.shopify.com/app-store/listing_images/cacdb6088b2158ea99761004a3f94dbc/icon/CJqiuZa6mJIDEAE=.png', link: 'https://chromewebstore.google.com/detail/new-tab-redirect/icpgjfneehieebagbmdbhnlpiopdcmna?pli=1' },
     ];
 
     windowsSettings.forEach(s => allTools.push(s));
@@ -720,7 +417,7 @@
     let tab = 'popular';
     const windowsCmds = ['control','main.cpl','appwiz.cpl','cmd','calc','control keyboard','notepad','msinfo32','taskmgr','osk','ms-settings:network','wf.msc','devmgmt.msc','regedit','timedate.cpl','inetcpl.cpl','mmsys.cpl','powercfg.cpl','ncpa.cpl','sysdm.cpl','lusrmgr.msc','compmgmt.msc','resmon','desk.cpl'];
 
-    // ── Helpers ──
+    // ── Helpers 
     function openMughalModal(title, desc, icon, isInput, callback) {
         document.getElementById('modalTitle').innerText = title;
         document.getElementById('modalDesc').innerText = desc;
@@ -735,26 +432,6 @@
     function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
     function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
     function closeViewer() { document.getElementById('viewer').style.display = 'none'; document.getElementById('vFrame').src = ''; }
-    
-    // 🎉 FULL SCREEN OVERLAY Functions
-    function showInstructionPopup() {
-        const overlay = document.getElementById('popupOverlay');
-        overlay.style.display = 'block';
-        // Prevent scrolling
-        document.body.style.overflow = 'hidden';
-    }
-    
-    function closeInstructionPopup() {
-        const overlay = document.getElementById('popupOverlay');
-        overlay.style.opacity = '0';
-        overlay.style.transition = 'opacity 0.4s ease';
-        setTimeout(() => {
-            overlay.style.display = 'none';
-            overlay.style.opacity = '1';
-            // Restore scrolling
-            document.body.style.overflow = '';
-        }, 400);
-    }
 
     // ── Render ──
     function render(filter = '') {
@@ -774,25 +451,21 @@
             const isSoftware = t.cat === 'software';
             const isBookmark = t.cat === 'bookmarks';
             const cardClass = isSoftware ? 'card software-card' : isBookmark ? 'card bookmark-card' : 'card';
-            // ✅ Software & Bookmarks both show "Open Link ↗"
-            const btnLabel  = (isSoftware || isBookmark) ? 'Open Link ↗' : 'Open Tool';
+            const btnLabel = (isSoftware || isBookmark) ? 'Open Link ↗' : 'Open Tool';
             grid.innerHTML += `<div class="${cardClass}" onclick="smartOpen('${t.link}','${t.cat}')"><div class="img-box"><img src="${t.img}" onerror="this.src='https://cdn-icons-png.flaticon.com/128/2965/2965278.png'"></div><div class="text-box"><h3>${t.name}</h3></div><div class="card-btn">${btnLabel}</div></div>`;
         });
     }
 
     // ── Smart Open ──
-    // ✅ Software & Bookmarks → new tab | Windows commands → modal | Others → iframe
     function smartOpen(url, cat) {
         if (windowsCmds.includes(url)) {
             showResult(`<h3>🔧 Windows Setting</h3><p>Yeh command run karein: <b>${url}</b><br>Run (Win+R) mein paste karein.</p>`);
             return;
         }
-        // ✅ Software aur Bookmarks dono new tab mein khulenge
         if (cat === 'bookmarks' || cat === 'software') {
             window.open(url, '_blank');
             return;
         }
-        // Baqi sab tools iframe viewer mein
         if (url && url.startsWith('http')) {
             document.getElementById('viewer').style.display = 'block';
             document.getElementById('vFrame').src = url;
@@ -819,60 +492,37 @@
         render();
     }
 
-    // ── Splash: Confetti ──
-    function initConf() {
-        const wrap = document.getElementById('sp-conf-wrap');
-        if (!wrap) return;
-        const cols = ['rgba(83,82,237,.25)','rgba(168,85,247,.22)','rgba(34,197,94,.22)','rgba(245,158,11,.22)','rgba(239,68,68,.18)','rgba(6,182,212,.22)','rgba(236,72,153,.2)'];
-        for (let i = 0; i < 22; i++) {
-            const s = document.createElement('div');
-            s.className = 'sp-conf';
-            const sz = 5 + Math.random() * 16;
-            s.style.cssText = [
-                `left:${Math.random()*100}%`,
-                `width:${sz}px`,
-                `height:${sz}px`,
-                `background:${cols[Math.floor(Math.random()*cols.length)]}`,
-                `border-radius:${Math.random()>.4?'50%':'6px'}`,
-                `animation-duration:${10+Math.random()*14}s`,
-                `animation-delay:${Math.random()*12}s`
-            ].join(';');
-            wrap.appendChild(s);
-        }
-    }
-
-    // ── Splash: Typewriter ──
-    function initTypewriter() {
-        const el = document.getElementById('spType');
-        if (!el) return;
-        const lines = ['Aapka All-in-One Digital Toolkit', 'PDF, Image, AI - Sab Kuch Free!', 'Koi Signup Nahi, Koi Limit Nahi!', '50+ Tools - Ek Hi Jagah'];
-        let li = 0, ci = 0, typing = true;
-        el.innerHTML = '<span class="sp-cur"></span>';
-        function tick() {
-            const line = lines[li];
-            if (typing) {
-                if (ci <= line.length) { el.innerHTML = line.slice(0,ci) + '<span class="sp-cur"></span>'; ci++; setTimeout(tick, 55); }
-                else { typing = false; setTimeout(tick, 1800); }
-            } else {
-                if (ci > 0) { el.innerHTML = line.slice(0,ci-1) + '<span class="sp-cur"></span>'; ci--; setTimeout(tick, 26); }
-                else { typing = true; li = (li+1) % lines.length; setTimeout(tick, 350); }
-            }
-        }
-        setTimeout(tick, 800);
-    }
-
-    // ── Close Splash ──
+    // 🚀 Close Splash Screen
     function closeSplash() {
-        const el = document.getElementById('splashScreen');
-        el.classList.add('hide');
-        setTimeout(() => { 
-            el.style.display = 'none';
-            // 🎉 Show FULL SCREEN popup after splash closes
-            showInstructionPopup();
-        }, 900);
+        const splash = document.getElementById('splashScreen');
+        splash.classList.add('hide');
+        setTimeout(() => {
+            splash.style.display = 'none';
+        }, 800);
     }
 
-    window.onload = () => { render(); initConf(); initTypewriter(); };
+    // Create confetti
+    function createConfetti() {
+        const container = document.getElementById('confetti-container');
+        const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#f0932b', '#eb4d4b', '#6c5ce7', '#a29bfe'];
+        
+        for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            confetti.style.animationDelay = Math.random() * 2 + 's';
+            confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+            container.appendChild(confetti);
+        }
+    }
+
+    window.onload = () => { 
+        render(); 
+        createConfetti();
+    };
 </script>
+
 </body>
 </html>
